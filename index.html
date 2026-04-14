@@ -1342,27 +1342,35 @@
      Replace the URL below with your deployed Web App URL
   ================================================ */
 function sendToGoogleSheet(data) {
-  // Use your actual deployed URL here:
-  const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbytMmUSj_Zw7rSmSMr1s6mb0Od868NDgfcmwWgEbYCRgslcuCBrcF08hWlwSJqyGwLN/exec"; 
-
+  const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyW8spd3ZUzmMPngtge0Lr4gOc5IK9RxDDgb3JGMAPZQHcP-BVqAfGASSZEIGX6LDLf/exec";
+  
   fetch(GOOGLE_SHEET_URL, {
     method: 'POST',
-    headers: { 
-      'Content-Type': 'text/plain;charset=utf-8' 
+    mode: 'cors',
+    headers: {
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
   })
-  .then(r => r.json())
+  .then(response => response.json())
   .then(result => {
+    console.log('Result:', result);
     if (result.status === 'success') {
-      console.log('✅ Successfully submitted to Google Sheet');
-      alert('Registration Successful!'); // Added this so you know it worked
+      alert('🎵 Registration Successful! Welcome to Eternal Praise Family! 🎵\n\nWe will contact you soon.');
+      // Clear the form fields
+      document.getElementById('joinName').value = '';
+      document.getElementById('joinEmail').value = '';
+      document.getElementById('joinPhone').value = '';
+      document.getElementById('joinVoice').value = '';
+      document.getElementById('joinBackground').value = 'none';
+      document.getElementById('joinReason').value = '';
     } else {
-      console.error('Google Sheet returned error:', result);
+      alert('⚠️ Error: ' + result.message);
     }
   })
   .catch(err => {
-    console.error('❌ Fetch error:', err);
+    console.error('Error:', err);
+    alert('⚠️ Connection error. Please try again.');
   });
 }
   /* ================================================
