@@ -1342,7 +1342,7 @@
      Replace the URL below with your deployed Web App URL
   ================================================ */
 function sendToGoogleSheet(data) {
-  const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyW8spd3ZUzmMPngtge0Lr4gOc5IK9RxDDgb3JGMAPZQHcP-BVqAfGASSZEIGX6LDLf/exec";
+  const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbs2bLmk45gHsF_wHyA-I-spkRzLTnDNQZYvL1R3GmdpP-1fsz1sLPTiAj7jqBB8K0t/exec";
   
   fetch(GOOGLE_SHEET_URL, {
     method: 'POST',
@@ -1357,7 +1357,6 @@ function sendToGoogleSheet(data) {
     console.log('Result:', result);
     if (result.status === 'success') {
       alert('🎵 Registration Successful! Welcome to Eternal Praise Family! 🎵\n\nWe will contact you soon.');
-      // Clear the form fields
       document.getElementById('joinName').value = '';
       document.getElementById('joinEmail').value = '';
       document.getElementById('joinPhone').value = '';
