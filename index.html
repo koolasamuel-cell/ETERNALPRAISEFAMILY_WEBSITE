@@ -1277,37 +1277,39 @@
      GOOGLE APPS SCRIPT INTEGRATION
      Single, guarded fetch — no duplicate requests
   ================================================ */
-  function doPost(e) {
-  try {
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Choir Data");
-    
-    if (!sheet) {
-      throw new Error("Sheet 'Choir Data' not found");
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbxc-r8plEorJnUI8l31NoLsLgek6EWcXdkOxnVoE6xmGfevI_gtMQWB_nclEvr0paQK/exec";
+  let _gasPending = false;
+  function sendToGoogleSheet(data, onDone) {
+    if (_gasPending) return;
+    _gasPending = true;
+    const formData = new FormData();
+    for (const key in data) {
+      formData.append(key, data[key]);
     }
-
-    const p = e.parameter;   // Correct way to read FormData
-
-    sheet.appendRow([
-      new Date(),
-      p.name || "",
-      p.email || "",
-      p.phone || "",
-      p.voice || "",
-      p.background || "",
-      p.reason || ""
-    ]);
-
-    return ContentService
-      .createTextOutput(JSON.stringify({ status: "success" }))
-      .setMimeType(ContentService.MimeType.JSON);
-
-  } catch (error) {
-    console.error(error);
-    return ContentService
-      .createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
+    fetch(GAS_URL, { method: "POST", body: formData })
+      .then(res => res.text())
+      .then(text => {
+        try {
+          const result = JSON.parse(text);
+          if (result.status === "success") {
+            if (typeof onDone === "function") onDone(true, result);
+          } else {
+            console.warn("GAS warning:", result.message);
+            if (typeof onDone === "function") onDone(false, result);
+          }
+        } catch (e) {
+          console.error("GAS parse error:", e, text);
+          if (typeof onDone === "function") onDone(false, null);
+        }
+      })
+      .catch(err => {
+        console.error("GAS fetch error:", err);
+        if (typeof onDone === "function") onDone(false, null);
+      })
+      .finally(() => {
+        _gasPending = false;
+      });
   }
-}
   /* ================================================
      LOCAL STORAGE KEYS
   ================================================ */
