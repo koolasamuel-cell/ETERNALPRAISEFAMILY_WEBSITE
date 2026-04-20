@@ -1344,31 +1344,32 @@
 function sendToGoogleSheet(data) {
   const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxc-r8plEorJnUI8l31NoLsLgek6EWcXdkOxnVoE6xmGfevI_gtMQWB_nclEvr0paQK/exec";
 
+  // ✅ Use FormData instead of JSON (fixes CORS)
+  const formData = new FormData();
+  formData.append("name", data.name);
+  formData.append("email", data.email);
+  formData.append("phone", data.phone);
+  formData.append("voice", data.voice);
+  formData.append("background", data.background);
+  formData.append("reason", data.reason);
+
   fetch(GOOGLE_SHEET_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
+    method: "POST",
+    body: formData
   })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    return response.text(); // safer for Apps Script
-  })
+  .then(res => res.text())
   .then(text => {
+    console.log("RAW RESPONSE:", text);
+
     let result;
     try {
       result = JSON.parse(text);
     } catch {
-      throw new Error("Invalid JSON response");
+      throw new Error("Invalid response from server");
     }
 
-    console.log('Result:', result);
-
-    if (result.status === 'success') {
-      alert('🎵 Registration Successful! Welcome to Eternal Praise Family! 🎵\n\nWe will contact you soon.');
+    if (result.status === "success") {
+      alert("🎵 Registration Successful! Welcome to Eternal Praise Family! 🎵\n\nWe will contact you soon.");
 
       document.getElementById('joinName').value = '';
       document.getElementById('joinEmail').value = '';
@@ -1377,15 +1378,14 @@ function sendToGoogleSheet(data) {
       document.getElementById('joinBackground').value = 'none';
       document.getElementById('joinReason').value = '';
     } else {
-      alert('⚠️ Error: ' + (result.message || 'Unknown error'));
+      alert("⚠️ " + (result.message || "Error"));
     }
   })
   .catch(err => {
-    console.error('Error:', err);
-    alert('⚠️ Connection error. Please try again.');
+    console.error("FETCH ERROR:", err);
+    alert("⚠️ Connection error. Please try again.");
   });
-}
-  /* ================================================
+}  /* ================================================
      LOCAL STORAGE KEYS
   ================================================ */
   const KEY_USERS         = 'epf_users';
