@@ -1349,10 +1349,10 @@ function doPost(e) {
       throw new Error("Sheet 'Choir Data' not found");
     }
 
-    const p = e.parameter;   // This correctly reads FormData
+    const p = e.parameter;   // Correct way for FormData
 
     sheet.appendRow([
-      new Date(),                    // Timestamp
+      new Date(),
       p.name || "",
       p.email || "",
       p.phone || "",
@@ -1366,13 +1366,13 @@ function doPost(e) {
       .setMimeType(ContentService.MimeType.JSON);
 
   } catch (error) {
-    console.error("Error:", error);
+    console.error("doPost error:", error);
     return ContentService
       .createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
   }
-
-}  /* ================================================
+}
+ /* ================================================
      LOCAL STORAGE KEYS
   ================================================ */
   const KEY_USERS         = 'epf_users';
