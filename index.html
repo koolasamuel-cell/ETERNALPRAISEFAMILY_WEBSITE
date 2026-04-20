@@ -586,7 +586,6 @@
       <span class="section-tag">Executives</span>
       <h2 class="section-title">Our <span class="gold">Leadership</span></h2>
       <div class="divider"></div>
-      <!-- Founder -->
       <div style="margin-bottom:32px;">
         <span class="section-tag" style="font-size:10px;">Founder &amp; President</span>
         <div class="leaders-grid" style="grid-template-columns:repeat(1,280px);">
@@ -799,7 +798,7 @@
             </select>
           </div>
           <div class="form-group"><label>Why do you want to join?</label><textarea id="joinReason" rows="3" placeholder="Share your heart..."></textarea></div>
-          <button class="btn btn-gold" style="width:100%;justify-content:center;" onclick="submitJoin()"><i class="fas fa-paper-plane"></i> Submit Application</button>
+          <button class="btn btn-gold" style="width:100%;justify-content:center;" id="joinSubmitBtn" onclick="submitJoin()"><i class="fas fa-paper-plane"></i> Submit Application</button>
         </div>
       </div>
     </div>
@@ -839,7 +838,7 @@
           <div class="form-group"><label style="color:var(--text-muted);">Email</label><input type="email" id="cEmail" placeholder="your@email.com"></div>
           <div class="form-group"><label style="color:var(--text-muted);">Subject</label><input type="text" id="cSubject" placeholder="Message subject"></div>
           <div class="form-group"><label style="color:var(--text-muted);">Message</label><textarea id="cMessage" rows="5" placeholder="Your message..."></textarea></div>
-          <button class="btn btn-purple" style="width:100%;justify-content:center;" onclick="submitContact()"><i class="fas fa-paper-plane"></i> Send Message</button>
+          <button class="btn btn-purple" style="width:100%;justify-content:center;" id="contactSubmitBtn" onclick="submitContact()"><i class="fas fa-paper-plane"></i> Send Message</button>
         </div>
       </div>
     </div>
@@ -1000,13 +999,11 @@
         </div>
       </div>
 
-      <!-- MY PERFORMANCE (Member-only view) -->
+      <!-- MY PERFORMANCE -->
       <div class="portal-subpage" id="p-myperformance">
         <div class="portal-header">
           <div><h1>My Performance</h1><p>Your personal ministry scorecard</p></div>
         </div>
-
-        <!-- Score Ring + Summary -->
         <div class="perf-card">
           <h3><i class="fas fa-trophy"></i> Overall Performance Score</h3>
           <div style="display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:center;">
@@ -1032,15 +1029,11 @@
             </div>
           </div>
         </div>
-
-        <!-- Weekly Attendance Register -->
         <div class="perf-card">
           <h3><i class="fas fa-calendar-week"></i> Weekly Attendance Register</h3>
           <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:16px;">Your attendance for each session week by week (last 8 weeks)</p>
           <div id="weeklyRegister"></div>
         </div>
-
-        <!-- Monthly Breakdown -->
         <div class="perf-card">
           <h3><i class="fas fa-chart-bar"></i> Monthly Attendance Breakdown</h3>
           <canvas id="myAttChart" height="120"></canvas>
@@ -1092,7 +1085,7 @@
               </select>
             </div>
           </div>
-          <button class="btn btn-gold" onclick="submitDuesNotification()"><i class="fas fa-paper-plane"></i> Notify Treasurer</button>
+          <button class="btn btn-gold" id="duesSubmitBtn" onclick="submitDuesNotification()"><i class="fas fa-paper-plane"></i> Notify Treasurer</button>
         </div>
       </div>
 
@@ -1111,7 +1104,7 @@
               </select>
             </div>
             <div><label>Date</label><input type="date" id="attDate"></div>
-            <button class="btn btn-gold" onclick="saveAttendance()"><i class="fas fa-save"></i> Save All</button>
+            <button class="btn btn-gold" id="saveAttBtn" onclick="saveAttendance()"><i class="fas fa-save"></i> Save All</button>
           </div>
           <div id="memberAttList"></div>
         </div>
@@ -1158,7 +1151,7 @@
                 <input type="text" id="excuseReason" placeholder="Brief reason for absence" style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;">
               </div>
             </div>
-            <button class="btn btn-purple" onclick="submitExcuse()"><i class="fas fa-paper-plane"></i> Submit Excuse</button>
+            <button class="btn btn-purple" id="excuseSubmitBtn" onclick="submitExcuse()"><i class="fas fa-paper-plane"></i> Submit Excuse</button>
           </div>
         </div>
       </div>
@@ -1339,53 +1332,46 @@
 <script>
   /* ================================================
      GOOGLE APPS SCRIPT INTEGRATION
-     Replace the URL below with your deployed Web App URL
+     Single, guarded fetch — no duplicate requests
   ================================================ */
-function sendToGoogleSheet(data) {
-  const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxc-r8plEorJnUI8l31NoLsLgek6EWcXdkOxnVoE6xmGfevI_gtMQWB_nclEvr0paQK/exec";
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbxc-r8plEorJnUI8l31NoLsLgek6EWcXdkOxnVoE6xmGfevI_gtMQWB_nclEvr0paQK/exec";
+  let _gasPending = false;
 
-  // ✅ Use FormData instead of JSON (fixes CORS)
-  const formData = new FormData();
-  formData.append("name", data.name);
-  formData.append("email", data.email);
-  formData.append("phone", data.phone);
-  formData.append("voice", data.voice);
-  formData.append("background", data.background);
-  formData.append("reason", data.reason);
+  function sendToGoogleSheet(data, onDone) {
+    if (_gasPending) return;
+    _gasPending = true;
 
-  fetch(GOOGLE_SHEET_URL, {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.text())
-  .then(text => {
-    console.log("RAW RESPONSE:", text);
-
-    let result;
-    try {
-      result = JSON.parse(text);
-    } catch {
-      throw new Error("Invalid response from server");
+    const formData = new FormData();
+    for (const key in data) {
+      formData.append(key, data[key]);
     }
 
-    if (result.status === "success") {
-      alert("🎵 Registration Successful! Welcome to Eternal Praise Family! 🎵\n\nWe will contact you soon.");
+    fetch(GAS_URL, { method: "POST", body: formData })
+      .then(res => res.text())
+      .then(text => {
+        try {
+          const result = JSON.parse(text);
+          if (result.status === "success") {
+            if (typeof onDone === "function") onDone(true, result);
+          } else {
+            console.warn("GAS warning:", result.message);
+            if (typeof onDone === "function") onDone(false, result);
+          }
+        } catch (e) {
+          console.error("GAS parse error:", e, text);
+          if (typeof onDone === "function") onDone(false, null);
+        }
+      })
+      .catch(err => {
+        console.error("GAS fetch error:", err);
+        if (typeof onDone === "function") onDone(false, null);
+      })
+      .finally(() => {
+        _gasPending = false;
+      });
+  }
 
-      document.getElementById('joinName').value = '';
-      document.getElementById('joinEmail').value = '';
-      document.getElementById('joinPhone').value = '';
-      document.getElementById('joinVoice').value = '';
-      document.getElementById('joinBackground').value = 'none';
-      document.getElementById('joinReason').value = '';
-    } else {
-      alert("⚠️ " + (result.message || "Error"));
-    }
-  })
-  .catch(err => {
-    console.error("FETCH ERROR:", err);
-    alert("⚠️ Connection error. Please try again.");
-  });
-}  /* ================================================
+  /* ================================================
      LOCAL STORAGE KEYS
   ================================================ */
   const KEY_USERS         = 'epf_users';
@@ -1462,6 +1448,15 @@ function sendToGoogleSheet(data) {
 
   function getInitials(name) {
     return name.split(' ').map(n=>n[0]).join('').toUpperCase().substr(0,2);
+  }
+
+  function disableBtn(id, label) {
+    const btn = document.getElementById(id);
+    if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = label; }
+  }
+  function enableBtn(id, label) {
+    const btn = document.getElementById(id);
+    if (btn) { btn.disabled = false; btn.style.opacity = ''; btn.innerHTML = label; }
   }
 
   /* ================================================
@@ -1548,9 +1543,9 @@ function sendToGoogleSheet(data) {
     document.getElementById('sidebarRole').textContent   = user.role === 'admin' ? 'Executive / Admin' : 'Choir Member';
     document.getElementById('dashGreeting').textContent  = `Welcome back, ${user.name.split(' ')[0]} 🎵`;
     const isAdmin = user.role === 'admin';
-    document.getElementById('nav-mark-li').style.display       = isAdmin ? '' : 'none';
-    document.getElementById('nav-members-li').style.display    = isAdmin ? '' : 'none';
-    document.getElementById('nav-dues-li').style.display       = isAdmin ? '' : 'none';
+    document.getElementById('nav-mark-li').style.display          = isAdmin ? '' : 'none';
+    document.getElementById('nav-members-li').style.display       = isAdmin ? '' : 'none';
+    document.getElementById('nav-dues-li').style.display          = isAdmin ? '' : 'none';
     document.getElementById('nav-announcements-li').style.display = isAdmin ? '' : 'none';
     showPortal('dashboard');
   }
@@ -1661,14 +1656,11 @@ function sendToGoogleSheet(data) {
     document.getElementById('perfExcusedCount').textContent  = excused;
     document.getElementById('perfScoreText').textContent     = score + '%';
 
-    // Animate SVG arc
     const arc = document.getElementById('perfArcFill');
     const circumference = 314;
-    const offset = circumference - (score / 100) * circumference;
-    arc.style.strokeDashoffset = offset;
+    arc.style.strokeDashoffset = circumference - (score / 100) * circumference;
     arc.style.stroke = score >= 80 ? '#1e8449' : score >= 60 ? '#d4a017' : '#c0392b';
 
-    // Rating label
     const ratingEl = document.getElementById('perfRating');
     if(score >= 90) { ratingEl.style.background='#d4edda'; ratingEl.style.color='#1e8449'; ratingEl.innerHTML='<i class="fas fa-star"></i> Excellent — Keep it up! You are a pillar of EPF.'; }
     else if(score >= 75) { ratingEl.style.background='#d4edda'; ratingEl.style.color='#1e8449'; ratingEl.innerHTML='<i class="fas fa-thumbs-up"></i> Good Standing — Well done, keep attending faithfully.'; }
@@ -1676,10 +1668,7 @@ function sendToGoogleSheet(data) {
     else if(total === 0) { ratingEl.style.background='#e9ecef'; ratingEl.style.color='#6c757d'; ratingEl.innerHTML='<i class="fas fa-info-circle"></i> No records yet. Attendance will be tracked after sessions.'; }
     else { ratingEl.style.background='#fde8e8'; ratingEl.style.color='#c0392b'; ratingEl.innerHTML='<i class="fas fa-triangle-exclamation"></i> Poor — You are at risk of receiving a caution notice.'; }
 
-    // Weekly register (last 8 weeks of Sundays)
     renderWeeklyRegister(myRecs);
-
-    // Monthly chart
     renderMyAttChart(myRecs);
   }
 
@@ -1740,11 +1729,9 @@ function sendToGoogleSheet(data) {
     const allDues = ls(KEY_DUES) || [];
     const myDues  = allDues.filter(d => d.memberId === currentUser.id);
     const confirmed = myDues.filter(d => d.status === 'confirmed');
-    const pending   = myDues.filter(d => d.status === 'pending');
     const monthlyRate = 20;
     const totalPaid   = confirmed.reduce((s,d) => s + (d.amount||monthlyRate), 0);
 
-    // Estimate months owed (since March 2026)
     const startMonth = new Date('2026-03-01');
     const now = new Date();
     let monthsElapsed = (now.getFullYear() - startMonth.getFullYear()) * 12 + (now.getMonth() - startMonth.getMonth()) + 1;
@@ -1758,7 +1745,6 @@ function sendToGoogleSheet(data) {
     document.getElementById('duesTotal').textContent   = 'GHS ' + totalPaid;
     document.getElementById('duesBalance').textContent = 'GHS ' + outstanding;
 
-    // Dues record
     const container = document.getElementById('duesRecord');
     if(myDues.length === 0) {
       container.innerHTML = '<p style="color:var(--text-muted);padding:20px 0;">No dues records yet. Submit a payment notification below.</p>';
@@ -1772,30 +1758,40 @@ function sendToGoogleSheet(data) {
         </div>`).join('');
     }
 
-    // Set current month as default
     const now2 = new Date();
     const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     document.getElementById('duesMonth').value = months[now2.getMonth()];
   }
 
   function submitDuesNotification() {
+    const btn = document.getElementById('duesSubmitBtn');
+    if(btn && btn.disabled) return;
+
     const month  = document.getElementById('duesMonth').value;
     const amount = parseInt(document.getElementById('duesAmountInput').value) || 20;
     const method = document.getElementById('duesMethod').value;
     if(!currentUser) return;
+
     let dues = ls(KEY_DUES) || [];
-    // Check not already submitted for this month
     const already = dues.find(d => d.memberId === currentUser.id && d.month === month && d.year === '2026');
     if(already) { toast('You already submitted dues for ' + month + '.', false); return; }
+
     dues.push({
       id: uid(), memberId: currentUser.id, memberName: currentUser.name,
       memberEmail: currentUser.email, month, year: '2026', amount, method,
       status: 'pending', submittedOn: today(), confirmedBy: '',
     });
     lsSet(KEY_DUES, dues);
-    sendToGoogleSheet({ type:'dues_notification', memberName:currentUser.name, memberEmail:currentUser.email, month, amount, method });
-    toast('Dues notification sent! Awaiting treasurer confirmation.');
-    renderMyDues();
+
+    disableBtn('duesSubmitBtn', '<i class="fas fa-spinner fa-spin"></i> Sending...');
+    sendToGoogleSheet(
+      { type:'dues_notification', memberName:currentUser.name, memberEmail:currentUser.email, month, amount, method },
+      () => {
+        enableBtn('duesSubmitBtn', '<i class="fas fa-paper-plane"></i> Notify Treasurer');
+        toast('Dues notification sent! Awaiting treasurer confirmation.');
+        renderMyDues();
+      }
+    );
   }
 
   /* ================================================
@@ -1889,6 +1885,9 @@ function sendToGoogleSheet(data) {
   }
 
   function saveAttendance() {
+    const saveBtn = document.getElementById('saveAttBtn');
+    if(saveBtn && saveBtn.disabled) return;
+
     const dateStr = document.getElementById('attDate').value || today();
     const typeVal = document.getElementById('attType').value;
     let attendance = ls(KEY_ATTENDANCE) || [];
@@ -1906,10 +1905,17 @@ function sendToGoogleSheet(data) {
     });
     lsSet(KEY_ATTENDANCE, attendance);
     checkAutoCaution();
-    sendToGoogleSheet({ type:'attendance_report', date:dateStr, session:typeVal, markedBy:currentUser?.name||'Admin', totalSaved:saved, records:JSON.stringify(report) });
-    toast(`✅ Attendance saved for ${saved} member(s)`);
-    Object.keys(attSelections).forEach(k => delete attSelections[k]);
-    renderAttendancePage();
+
+    disableBtn('saveAttBtn', '<i class="fas fa-spinner fa-spin"></i> Saving...');
+    sendToGoogleSheet(
+      { type:'attendance_report', date:dateStr, session:typeVal, markedBy:currentUser?.name||'Admin', totalSaved:saved, records:JSON.stringify(report) },
+      () => {
+        enableBtn('saveAttBtn', '<i class="fas fa-save"></i> Save All');
+        toast(`Attendance saved for ${saved} member(s)`);
+        Object.keys(attSelections).forEach(k => delete attSelections[k]);
+        renderAttendancePage();
+      }
+    );
   }
 
   function checkAutoCaution() {
@@ -1955,6 +1961,9 @@ function sendToGoogleSheet(data) {
   }
 
   function submitExcuse() {
+    const btn = document.getElementById('excuseSubmitBtn');
+    if(btn && btn.disabled) return;
+
     const date   = document.getElementById('excuseDate').value;
     const reason = document.getElementById('excuseReason').value.trim();
     if(!date || !reason) { toast('Please fill both fields.', false); return; }
@@ -1963,9 +1972,16 @@ function sendToGoogleSheet(data) {
     if(idx === -1) { toast('No absence record found for that date.', false); return; }
     att[idx].reason = reason;
     lsSet(KEY_ATTENDANCE, att);
-    sendToGoogleSheet({ type:'excuse_submission', memberName:currentUser.name, memberEmail:currentUser.email, voice:currentUser.voice, date, reason });
-    toast('Excuse submitted successfully!');
-    loadRecords();
+
+    disableBtn('excuseSubmitBtn', '<i class="fas fa-spinner fa-spin"></i> Sending...');
+    sendToGoogleSheet(
+      { type:'excuse_submission', memberName:currentUser.name, memberEmail:currentUser.email, voice:currentUser.voice, date, reason },
+      () => {
+        enableBtn('excuseSubmitBtn', '<i class="fas fa-paper-plane"></i> Submit Excuse');
+        toast('Excuse submitted successfully!');
+        loadRecords();
+      }
+    );
   }
 
   /* ================================================
@@ -2199,35 +2215,59 @@ function sendToGoogleSheet(data) {
   }
 
   /* ================================================
-     JOIN FORM
+     JOIN FORM — single guarded submission
   ================================================ */
   function submitJoin() {
+    const btn = document.getElementById('joinSubmitBtn');
+    if(btn && btn.disabled) return;
+
     const name       = document.getElementById('joinName').value.trim();
     const email      = document.getElementById('joinEmail').value.trim();
     const phone      = document.getElementById('joinPhone').value.trim();
     const voice      = document.getElementById('joinVoice').value;
     const background = document.getElementById('joinBackground').value;
     const reason     = document.getElementById('joinReason').value.trim();
+
     if(!name || !email) { toast('Please provide your name and email.', false); return; }
-    sendToGoogleSheet({ type:'join_application', name, email, phone, voice, background, reason });
-    toast('Application submitted! We will be in touch soon. God bless you! 🙏');
-    ['joinName','joinEmail','joinPhone','joinReason'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('joinVoice').value = '';
-    document.getElementById('joinBackground').value = 'none';
+
+    disableBtn('joinSubmitBtn', '<i class="fas fa-spinner fa-spin"></i> Submitting...');
+
+    sendToGoogleSheet(
+      { type:'join_application', name, email, phone, voice, background, reason },
+      () => {
+        enableBtn('joinSubmitBtn', '<i class="fas fa-paper-plane"></i> Submit Application');
+        toast('Application submitted! We will be in touch soon. God bless you! 🙏');
+        ['joinName','joinEmail','joinPhone','joinReason'].forEach(id => { document.getElementById(id).value = ''; });
+        document.getElementById('joinVoice').value = '';
+        document.getElementById('joinBackground').value = 'none';
+      }
+    );
   }
 
   /* ================================================
-     CONTACT FORM
+     CONTACT FORM — single guarded submission
   ================================================ */
   function submitContact() {
+    const btn = document.getElementById('contactSubmitBtn');
+    if(btn && btn.disabled) return;
+
     const name    = document.getElementById('cName').value.trim();
     const email   = document.getElementById('cEmail').value.trim();
     const subject = document.getElementById('cSubject').value.trim();
     const message = document.getElementById('cMessage').value.trim();
+
     if(!name || !email || !message) { toast('Please fill all required fields.', false); return; }
-    sendToGoogleSheet({ type:'contact_message', name, email, subject, message });
-    toast('Message sent! We will get back to you shortly.');
-    ['cName','cEmail','cSubject','cMessage'].forEach(id => document.getElementById(id).value = '');
+
+    disableBtn('contactSubmitBtn', '<i class="fas fa-spinner fa-spin"></i> Sending...');
+
+    sendToGoogleSheet(
+      { type:'contact_message', name, email, subject, message },
+      () => {
+        enableBtn('contactSubmitBtn', '<i class="fas fa-paper-plane"></i> Send Message');
+        toast('Message sent! We will get back to you shortly.');
+        ['cName','cEmail','cSubject','cMessage'].forEach(id => { document.getElementById(id).value = ''; });
+      }
+    );
   }
 
   /* ================================================
