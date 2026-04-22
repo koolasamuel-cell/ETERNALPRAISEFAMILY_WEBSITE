@@ -1,371 +1,2062 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Express Yourself System</title>
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<style>
-body{
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg,#0f0f0f,#1c1c1c);
-    color:white;
-    padding:20px;
-}
-
-h1{
-    text-align:center;
-    color:gold;
-}
-
-/* SECTIONS */
-#loginSection, #scoreForm{
-    max-width:600px;
-    margin:0 auto 20px;
-    background:rgba(255,255,255,0.05);
-    padding:20px;
-    border-radius:12px;
-}
-
-label{ display:block; color:#ccc; margin:5px 0 3px; }
-
-input{
-    width:100%;
-    padding:10px;
-    border-radius:8px;
-    border:none;
-    outline:none;
-    box-sizing: border-box;
-}
-
-/* GRID FOR SCORES */
-.grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:15px;
-    margin-top:15px;
-}
-
-.box{
-    background:rgba(255,255,255,0.05);
-    padding:10px;
-    border-radius:10px;
-}
-
-button{
-    margin-top:15px;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:bold;
-    transition: 0.3s;
-}
-
-.submit{background:gold;color:black; width: 100%; font-size: 1.1em;}
-.submit:hover{background: #ffd700; transform: scale(1.02);}
-.reset{background:#444;color:white; width: 100%;}
-.logout{background:#e74c3c;color:white; float:right; margin-top:0; padding: 5px 15px;}
-
-.status{
-    text-align:center;
-    margin-top:10px;
-    color:lightgreen;
-    font-weight:bold;
-}
-
-/* TABLES */
-.board, .history-section{
-    margin-top:40px;
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:10px;
-    background: rgba(0,0,0,0.3);
-}
-
-th,td{
-    padding:12px;
-    border:1px solid #333;
-    text-align:center;
-}
-
-th{
-    background:gold;
-    color:black;
-}
-
-/* JUDGE LIST STYLING (The footer requirement) */
-.judge-row-footer {
-    font-size: 0.75em;
-    color: #ffd700;
-    margin-top: 8px;
-    display: block;
-    text-align: left;
-    border-top: 1px solid #444;
-    padding-top: 4px;
-}
-
-/* TOP 3 COLORS */
-.first{background:rgba(31, 170, 89, 0.3); color:white;}
-.second{background:rgba(241, 196, 15, 0.3); color:white;}
-.third{background:rgba(231, 76, 60, 0.3); color:white;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eternal Praise Family – Choir Ministry</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --gold:#C9A84C;--gold-light:#E8C97A;--gold-dim:#8a6d28;
+      --purple:#2C1654;--purple-mid:#3D2173;--purple-light:#5a3a9a;
+      --cream:#FAF7F2;--white:#FFFFFF;--text-dark:#1a1028;
+      --text-mid:#4a3d6e;--text-muted:#9086aa;
+      --danger:#c0392b;--success:#1e8449;--warn:#d4a017;
+      --card-bg:rgba(255,255,255,0.07);--border:rgba(201,168,76,0.25);
+      --shadow:0 8px 40px rgba(44,22,84,0.18);
+      --radius:14px;--radius-sm:8px;--transition:0.3s cubic-bezier(.4,0,.2,1);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-dark);line-height:1.7;overflow-x:hidden}
+    h1,h2,h3,h4,h5{font-family:'Cormorant Garamond',serif}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    button{cursor:pointer;border:none;outline:none;font-family:'Jost',sans-serif}
+    input,select,textarea{font-family:'Jost',sans-serif}
+    .hidden{display:none!important}
+    .gold{color:var(--gold)}
+    .container{max-width:1200px;margin:0 auto;padding:0 24px}
+    .section-tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+    .section-title{font-size:clamp(2rem,4vw,3rem);font-weight:600;line-height:1.2;color:var(--purple);margin-bottom:16px}
+    .divider{width:60px;height:3px;background:linear-gradient(90deg,var(--gold),transparent);margin:16px 0 32px}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:50px;font-size:0.9rem;font-weight:600;letter-spacing:0.5px;transition:var(--transition)}
+    .btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:var(--purple)}
+    .btn-gold:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(201,168,76,0.4)}
+    .btn-outline{border:2px solid var(--gold);color:var(--gold);background:transparent}
+    .btn-outline:hover{background:var(--gold);color:var(--purple)}
+    .btn-purple{background:var(--purple);color:var(--gold)}
+    .btn-purple:hover{background:var(--purple-mid)}
+    .btn-danger{background:var(--danger);color:#fff;padding:8px 16px;border-radius:var(--radius-sm);font-size:0.82rem}
+    .btn-sm{padding:8px 18px;font-size:0.82rem}
+    .badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:0.75rem;font-weight:600}
+    .badge-green{background:#d4edda;color:#1e8449}
+    .badge-red{background:#fde8e8;color:var(--danger)}
+    .badge-gold{background:#fef3cd;color:#856404}
+    .badge-gray{background:#e9ecef;color:#6c757d}
+    .badge-blue{background:#dbeafe;color:#1d4ed8}
+    .badge-yellow{background:#fff3cd;color:#856404}
+    /* NAVBAR */
+    #navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(44,22,84,0.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);transition:var(--transition)}
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;height:70px}
+    .nav-logo{display:flex;align-items:center;gap:12px;font-family:'Cormorant Garamond',serif}
+    .nav-logo .icon{width:42px;height:42px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--purple);font-size:1.1rem}
+    .nav-logo .name{font-size:1.25rem;font-weight:700;color:var(--white);line-height:1.1}
+    .nav-logo .sub{font-size:0.7rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase}
+    .nav-links{display:flex;align-items:center;gap:4px;list-style:none}
+    .nav-links a{color:rgba(255,255,255,0.8);font-size:0.88rem;font-weight:500;padding:8px 14px;border-radius:var(--radius-sm);transition:var(--transition)}
+    .nav-links a:hover,.nav-links a.active{color:var(--gold);background:rgba(201,168,76,0.1)}
+    .nav-actions{display:flex;gap:10px;align-items:center}
+    .hamburger{display:none;flex-direction:column;gap:5px;background:none;padding:6px}
+    .hamburger span{display:block;width:24px;height:2px;background:var(--gold);border-radius:2px;transition:var(--transition)}
+    .mobile-menu{display:none;flex-direction:column;background:var(--purple);border-top:1px solid var(--border);padding:12px 24px 20px;gap:4px}
+    .mobile-menu a{color:rgba(255,255,255,0.85);padding:10px 0;font-size:0.95rem;border-bottom:1px solid rgba(255,255,255,0.07)}
+    .mobile-menu a:hover{color:var(--gold)}
+    .mobile-menu.open{display:flex}
+    .page-section{display:none}
+    .page-section.active{display:block}
+    /* HERO */
+    #hero{min-height:100vh;background:linear-gradient(160deg,rgba(44,22,84,0.92) 0%,rgba(61,33,115,0.82) 50%,rgba(44,22,84,0.95) 100%),url('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1600&q=80') center/cover no-repeat;display:flex;align-items:center;position:relative;overflow:hidden;padding-top:70px}
+    #hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 50%,rgba(201,168,76,0.12) 0%,transparent 70%)}
+    .hero-content{position:relative;z-index:2;padding:80px 0}
+    .hero-eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:24px;animation:fadeUp 0.8s ease both}
+    .hero-eyebrow span{font-size:11px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--gold)}
+    .hero-eyebrow .line{flex:1;max-width:60px;height:1px;background:var(--gold);opacity:0.5}
+    .hero-title{font-size:clamp(2.8rem,6vw,5rem);font-weight:700;color:var(--white);line-height:1.05;margin-bottom:20px;animation:fadeUp 0.8s 0.15s ease both}
+    .hero-title em{font-style:italic;color:var(--gold-light)}
+    .hero-mission{font-size:1.1rem;color:rgba(255,255,255,0.75);max-width:520px;margin-bottom:32px;animation:fadeUp 0.8s 0.3s ease both}
+    .hero-ctas{display:flex;flex-wrap:wrap;gap:14px;animation:fadeUp 0.8s 0.45s ease both}
+    .hero-announcements{margin-top:64px;animation:fadeUp 0.8s 0.6s ease both}
+    .announce-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+    .announce-cards{display:flex;flex-wrap:wrap;gap:14px}
+    .announce-card{background:rgba(255,255,255,0.07);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;backdrop-filter:blur(8px);min-width:220px;flex:1;max-width:280px}
+    .announce-card .date{font-size:0.75rem;color:var(--gold);margin-bottom:6px}
+    .announce-card p{font-size:0.88rem;color:rgba(255,255,255,0.85)}
+    .hero-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,0.5);font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;animation:bounce 2s infinite}
+    /* ABOUT */
+    #about{padding:100px 0;background:var(--white)}
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+    .about-image-wrap{position:relative}
+    .about-badge{position:absolute;bottom:-24px;right:-24px;background:var(--gold);color:var(--purple);border-radius:var(--radius);padding:24px 28px;text-align:center;font-family:'Cormorant Garamond',serif;box-shadow:var(--shadow)}
+    .about-badge .num{font-size:2.5rem;font-weight:700;line-height:1}
+    .about-badge .label{font-size:0.8rem;letter-spacing:1px;text-transform:uppercase}
+    .values-list{list-style:none;margin-top:24px}
+    .values-list li{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,0.06);font-size:0.95rem}
+    .values-list li i{color:var(--gold);margin-top:4px;flex-shrink:0}
+    /* VOICE GROUPS */
+    #voices{padding:80px 0;background:var(--purple)}
+    .voices-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:40px}
+    .voice-card{background:rgba(255,255,255,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius);padding:28px 20px;text-align:center;transition:var(--transition)}
+    .voice-card:hover{background:rgba(201,168,76,0.12);transform:translateY(-4px)}
+    .voice-icon{width:56px;height:56px;margin:0 auto 16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+    .voice-card h3{color:var(--gold-light);font-size:1.4rem;margin-bottom:8px}
+    .voice-card p{color:rgba(255,255,255,0.65);font-size:0.85rem}
+    .voice-card .count{color:var(--gold);font-weight:700;font-size:1.1rem;margin-top:10px}
+    /* PROGRAMS */
+    #programs{padding:100px 0;background:var(--cream)}
+    .programs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+    .program-card{background:var(--white);border-radius:var(--radius);overflow:hidden;box-shadow:0 4px 20px rgba(44,22,84,0.08);transition:var(--transition);border:1px solid rgba(201,168,76,0.15)}
+    .program-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+    .program-header{background:linear-gradient(135deg,var(--purple),var(--purple-mid));padding:24px;position:relative}
+    .program-date{display:inline-flex;flex-direction:column;align-items:center;background:var(--gold);color:var(--purple);border-radius:var(--radius-sm);padding:8px 14px;font-family:'Cormorant Garamond',serif;font-weight:700;margin-bottom:14px}
+    .program-date .day{font-size:1.8rem;line-height:1}
+    .program-date .mon{font-size:0.75rem;letter-spacing:2px;text-transform:uppercase}
+    .program-title{color:var(--white);font-size:1.25rem;margin-bottom:6px}
+    .program-type{color:var(--gold);font-size:0.8rem;letter-spacing:2px;text-transform:uppercase}
+    .program-body{padding:20px}
+    .program-meta{display:flex;flex-direction:column;gap:8px;font-size:0.88rem;color:var(--text-mid)}
+    .program-meta span{display:flex;align-items:center;gap:8px}
+    .program-meta i{color:var(--gold);width:14px}
+    /* SCHEDULE */
+    #schedule{padding:80px 0;background:var(--white)}
+    .schedule-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:40px}
+    .schedule-card{background:var(--cream);border-radius:var(--radius);padding:28px;border:1px solid var(--border)}
+    .schedule-card h3{font-size:1.3rem;color:var(--purple);margin-bottom:16px}
+    .schedule-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed rgba(0,0,0,0.08);font-size:0.9rem}
+    .schedule-item:last-child{border-bottom:none}
+    .sched-day{color:var(--gold-dim);font-weight:600}
+    .sched-time{color:var(--text-mid)}
+    /* LEADERSHIP */
+    #leadership{padding:100px 0;background:var(--cream)}
+    .leaders-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:40px}
+    .leader-card{background:var(--white);border-radius:var(--radius);overflow:hidden;text-align:center;box-shadow:0 4px 20px rgba(44,22,84,0.08);transition:var(--transition);border:1px solid rgba(201,168,76,0.1)}
+    .leader-card:hover{transform:translateY(-4px)}
+    .leader-avatar{width:100%;height:200px;background:linear-gradient(135deg,var(--purple),var(--purple-mid));display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--gold);position:relative;overflow:hidden}
+    .leader-avatar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:30%;background:linear-gradient(to top,rgba(0,0,0,0.3),transparent)}
+    .leader-info{padding:18px 16px}
+    .leader-info h3{font-size:1.1rem;color:var(--purple);margin-bottom:4px}
+    .leader-role{font-size:0.78rem;color:var(--gold-dim);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+    .leader-voice{font-size:0.82rem;color:var(--text-muted);margin-top:4px}
+    /* GALLERY */
+    #gallery{padding:100px 0;background:var(--purple)}
+    .gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:200px;gap:12px;margin-top:40px}
+    .gallery-item{border-radius:var(--radius-sm);overflow:hidden;background:rgba(255,255,255,0.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--gold);cursor:pointer;transition:var(--transition);position:relative}
+    .gallery-item:hover{transform:scale(1.03);border-color:var(--gold)}
+    .gallery-item.tall{grid-row:span 2}
+    .gallery-item.wide{grid-column:span 2}
+    .gallery-overlay{position:absolute;inset:0;background:rgba(44,22,84,0.7);display:flex;align-items:center;justify-content:center;opacity:0;transition:var(--transition);font-size:1.5rem;color:var(--gold)}
+    .gallery-item:hover .gallery-overlay{opacity:1}
+    .gallery-placeholder{font-size:0.75rem;color:rgba(255,255,255,0.4);text-align:center;padding:12px}
+    /* VISION */
+    #vision{padding:100px 0;background:var(--white)}
+    .vision-content{display:grid;grid-template-columns:2fr 1fr;gap:60px;align-items:start}
+    .vision-pillars{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px}
+    .pillar{background:var(--cream);border-radius:var(--radius);padding:24px;border-left:4px solid var(--gold)}
+    .pillar h4{color:var(--purple);font-size:1.1rem;margin-bottom:8px}
+    .pillar p{font-size:0.88rem;color:var(--text-mid)}
+    .vision-sidebar{padding-top:60px}
+    .sidebar-card{background:var(--purple);border-radius:var(--radius);padding:28px;color:var(--white);margin-bottom:20px}
+    .sidebar-card h4{color:var(--gold);margin-bottom:14px;font-size:1.1rem}
+    .sidebar-card ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+    .sidebar-card li{font-size:0.88rem;display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.8)}
+    .sidebar-card li i{color:var(--gold)}
+    /* JOIN */
+    #join{padding:100px 0;background:linear-gradient(135deg,var(--purple) 0%,var(--purple-mid) 100%)}
+    .join-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+    .join-info h2{color:var(--gold-light);font-size:clamp(2rem,4vw,3rem);margin-bottom:16px}
+    .join-info p{color:rgba(255,255,255,0.75);margin-bottom:24px}
+    .join-perks{list-style:none;display:flex;flex-direction:column;gap:12px}
+    .join-perks li{display:flex;align-items:center;gap:10px;color:rgba(255,255,255,0.85);font-size:0.95rem}
+    .join-perks li i{color:var(--gold)}
+    .join-form-wrap{background:rgba(255,255,255,0.08);border:1px solid var(--border);border-radius:var(--radius);padding:36px;backdrop-filter:blur(10px)}
+    .form-group{margin-bottom:18px}
+    .form-group label{display:block;font-size:0.82rem;font-weight:600;color:var(--gold);margin-bottom:6px;letter-spacing:0.5px;text-transform:uppercase}
+    .form-group input,.form-group select,.form-group textarea{width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(201,168,76,0.3);border-radius:var(--radius-sm);padding:12px 16px;color:var(--white);font-size:0.92rem;transition:var(--transition)}
+    .form-group input::placeholder{color:rgba(255,255,255,0.4)}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold);outline:none;background:rgba(255,255,255,0.12)}
+    .form-group select option{background:var(--purple)}
+    /* CONTACT */
+    #contact{padding:100px 0;background:var(--cream)}
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px}
+    .contact-info h2{font-size:2.5rem;color:var(--purple);margin-bottom:16px}
+    .contact-info p{color:var(--text-mid);margin-bottom:28px}
+    .contact-details{display:flex;flex-direction:column;gap:16px}
+    .contact-item{display:flex;align-items:flex-start;gap:14px}
+    .contact-item .icon-wrap{width:44px;height:44px;flex-shrink:0;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1rem}
+    .contact-item .text h5{color:var(--purple);font-size:0.95rem;margin-bottom:2px}
+    .contact-item .text p{font-size:0.88rem;color:var(--text-mid)}
+    .contact-form-wrap{background:var(--white);border-radius:var(--radius);padding:36px;box-shadow:var(--shadow)}
+    .contact-form-wrap input,.contact-form-wrap select,.contact-form-wrap textarea{background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:12px 16px;color:var(--text-dark);font-size:0.92rem;width:100%;transition:var(--transition)}
+    .contact-form-wrap input:focus,.contact-form-wrap textarea:focus{border-color:var(--gold);outline:none}
+    /* FOOTER */
+    #footer{background:var(--text-dark);color:rgba(255,255,255,0.7);padding:60px 0 24px}
+    .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+    .footer-brand .nav-logo{margin-bottom:16px}
+    .footer-brand p{font-size:0.88rem;line-height:1.8}
+    .footer-col h4{color:var(--gold);font-size:0.85rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
+    .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+    .footer-col li a{font-size:0.88rem;transition:var(--transition)}
+    .footer-col li a:hover{color:var(--gold)}
+    .footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:24px;display:flex;justify-content:space-between;align-items:center;font-size:0.82rem}
+    .social-links{display:flex;gap:10px}
+    .social-links a{width:34px;height:34px;border:1px solid rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;transition:var(--transition)}
+    .social-links a:hover{border-color:var(--gold);color:var(--gold)}
+    /* LOGIN */
+    #login-page{min-height:100vh;background:linear-gradient(135deg,var(--purple) 0%,var(--purple-mid) 60%,#1a0d3a 100%);display:flex;align-items:center;justify-content:center;padding:100px 24px 40px;position:relative;overflow:hidden}
+    #login-page::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%,rgba(201,168,76,0.1) 0%,transparent 60%)}
+    .login-card{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:20px;padding:48px 40px;width:100%;max-width:420px;backdrop-filter:blur(16px);position:relative;z-index:2}
+    .login-logo{text-align:center;margin-bottom:32px}
+    .login-logo .icon{width:64px;height:64px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--purple)}
+    .login-logo h2{color:var(--white);font-size:1.6rem;margin-bottom:4px}
+    .login-logo p{color:rgba(255,255,255,0.5);font-size:0.85rem}
+    .login-form .form-group label{color:var(--gold)}
+    .login-form input{background:rgba(255,255,255,0.08);border:1px solid rgba(201,168,76,0.25);border-radius:var(--radius-sm);padding:13px 16px;color:var(--white);font-size:0.95rem;width:100%;transition:var(--transition)}
+    .login-form input::placeholder{color:rgba(255,255,255,0.3)}
+    .login-form input:focus{border-color:var(--gold);outline:none;background:rgba(255,255,255,0.12)}
+    .login-footer{text-align:center;margin-top:20px;font-size:0.82rem;color:rgba(255,255,255,0.45)}
+    .login-footer a{color:var(--gold)}
+    .login-error{background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.4);color:#f9a8a8;border-radius:var(--radius-sm);padding:12px 16px;font-size:0.88rem;margin-bottom:16px;display:none}
+    .login-error.show{display:block}
+    .login-info{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);color:var(--gold-light);border-radius:var(--radius-sm);padding:12px 16px;font-size:0.82rem;margin-bottom:16px}
+    /* PORTAL */
+    #portal-wrap{display:none;min-height:100vh;padding-top:70px;background:#f5f3fa}
+    #portal-wrap.active{display:flex}
+    .portal-layout{display:flex;width:100%}
+    .portal-sidebar{width:260px;flex-shrink:0;background:var(--purple);min-height:calc(100vh - 70px);padding:24px 0;position:sticky;top:70px;height:calc(100vh - 70px);overflow-y:auto}
+    .sidebar-user{padding:0 20px 20px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:12px}
+    .sidebar-user .avatar{width:48px;height:48px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--purple);font-size:1.2rem;font-weight:700;margin-bottom:10px}
+    .sidebar-user .uname{color:var(--white);font-weight:600;font-size:0.95rem}
+    .sidebar-user .urole{color:var(--gold);font-size:0.75rem;letter-spacing:1px;text-transform:uppercase}
+    .sidebar-user .ustatus{font-size:0.72rem;margin-top:4px;padding:2px 8px;border-radius:50px;display:inline-block}
+    .sidebar-nav{list-style:none}
+    .sidebar-nav li a{display:flex;align-items:center;gap:10px;padding:12px 20px;color:rgba(255,255,255,0.65);font-size:0.9rem;transition:var(--transition)}
+    .sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--gold);background:rgba(201,168,76,0.1)}
+    .sidebar-nav li a i{width:18px}
+    .sidebar-nav .section-label{padding:16px 20px 6px;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+    .portal-content{flex:1;overflow:hidden}
+    .portal-subpage{display:none;padding:32px}
+    .portal-subpage.active{display:block}
+    .portal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+    .portal-header h1{font-size:1.8rem;color:var(--purple)}
+    .portal-header p{color:var(--text-muted);font-size:0.88rem}
+    /* MEMBER STATUS CARD */
+    .member-status-banner{border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:16px;border:2px solid}
+    .status-green{background:#f0fff4;border-color:#1e8449;color:#1e8449}
+    .status-yellow{background:#fffbeb;border-color:#d4a017;color:#856404}
+    .status-red{background:#fff5f5;border-color:#c0392b;color:#c0392b}
+    .status-icon{font-size:2rem}
+    .status-text h4{font-size:1rem;margin-bottom:2px}
+    .status-text p{font-size:0.82rem;opacity:0.8}
+    /* STAT CARDS */
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:28px}
+    .stat-card{background:var(--white);border-radius:var(--radius);padding:24px;box-shadow:0 2px 12px rgba(44,22,84,0.07);border:1px solid rgba(201,168,76,0.1);display:flex;align-items:flex-start;gap:16px;transition:var(--transition)}
+    .stat-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(44,22,84,0.12)}
+    .stat-icon{width:48px;height:48px;flex-shrink:0;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+    .stat-card .num{font-size:1.8rem;font-weight:700;color:var(--purple);font-family:'Cormorant Garamond',serif}
+    .stat-card .label{font-size:0.82rem;color:var(--text-muted)}
+    .stat-card .change{font-size:0.78rem;margin-top:4px}
+    /* TABLES */
+    .data-table-wrap{background:var(--white);border-radius:var(--radius);box-shadow:0 2px 12px rgba(44,22,84,0.07);overflow:hidden;border:1px solid rgba(201,168,76,0.1)}
+    .table-header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid rgba(0,0,0,0.06);flex-wrap:wrap;gap:10px}
+    .table-header h3{font-size:1.1rem;color:var(--purple)}
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{background:var(--cream);padding:12px 16px;text-align:left;font-size:0.78rem;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--text-muted);border-bottom:1px solid rgba(0,0,0,0.06)}
+    .data-table td{padding:14px 16px;font-size:0.9rem;border-bottom:1px solid rgba(0,0,0,0.04);color:var(--text-dark)}
+    .data-table tr:last-child td{border-bottom:none}
+    .data-table tr:hover td{background:rgba(201,168,76,0.04)}
+    /* CHARTS */
+    .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px}
+    .chart-card{background:var(--white);border-radius:var(--radius);padding:24px;box-shadow:0 2px 12px rgba(44,22,84,0.07);border:1px solid rgba(201,168,76,0.1)}
+    .chart-card h3{font-size:1rem;color:var(--purple);margin-bottom:16px}
+    /* ATTENDANCE */
+    .attendance-tools{background:var(--white);border-radius:var(--radius);padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(44,22,84,0.07);border:1px solid rgba(201,168,76,0.1)}
+    .att-form{display:grid;grid-template-columns:1fr 1fr auto;gap:16px;align-items:end;margin-bottom:24px}
+    .att-form select,.att-form input{background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;font-size:0.9rem;color:var(--text-dark)}
+    .att-form label{font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px}
+    .member-att-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid rgba(0,0,0,0.05)}
+    .member-att-row:last-child{border-bottom:none}
+    .att-member{display:flex;align-items:center;gap:12px}
+    .att-avatar{width:36px;height:36px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700;font-size:0.85rem}
+    .att-controls{display:flex;gap:8px}
+    .att-btn{padding:6px 16px;border-radius:50px;font-size:0.82rem;font-weight:600;transition:var(--transition)}
+    .att-btn.present{background:#d4edda;color:#1e8449}
+    .att-btn.present.active{background:#1e8449;color:#fff}
+    .att-btn.absent{background:#fde8e8;color:var(--danger)}
+    .att-btn.absent.active{background:var(--danger);color:#fff}
+    /* PROFILE */
+    .profile-card{background:var(--white);border-radius:var(--radius);padding:36px;box-shadow:0 2px 12px rgba(44,22,84,0.07);max-width:600px;border:1px solid rgba(201,168,76,0.1)}
+    .profile-avatar-wrap{text-align:center;margin-bottom:28px}
+    .profile-avatar{width:90px;height:90px;background:linear-gradient(135deg,var(--purple),var(--purple-mid));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--gold);font-weight:700;margin:0 auto 12px}
+    .profile-form input,.profile-form select{background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;font-size:0.92rem;color:var(--text-dark);width:100%}
+    .profile-form label{font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px}
+    .profile-form .form-group{margin-bottom:16px}
+    /* NOTICES */
+    .notice-card{background:var(--white);border-radius:var(--radius);padding:24px;border-left:5px solid var(--danger);box-shadow:0 2px 12px rgba(44,22,84,0.07);margin-bottom:16px}
+    .notice-card.caution{border-left-color:var(--warn)}
+    .notice-card h4{color:var(--danger);font-size:1.1rem;margin-bottom:8px}
+    .notice-card.caution h4{color:var(--warn)}
+    .notice-card p{color:var(--text-mid);font-size:0.9rem;margin-bottom:8px}
+    .notice-meta{font-size:0.78rem;color:var(--text-muted)}
+    /* PROGRESS BARS */
+    .progress-bar-wrap{margin:8px 0}
+    .progress-label{display:flex;justify-content:space-between;font-size:0.82rem;color:var(--text-muted);margin-bottom:4px}
+    .progress-bar{height:8px;background:var(--cream);border-radius:50px;overflow:hidden}
+    .progress-fill{height:100%;border-radius:50px;background:linear-gradient(90deg,var(--purple),var(--gold));transition:width 1s ease}
+    /* MEMBER PERFORMANCE CARD */
+    .perf-card{background:var(--white);border-radius:var(--radius);padding:28px;box-shadow:0 2px 12px rgba(44,22,84,0.07);border:1px solid rgba(201,168,76,0.1);margin-bottom:24px}
+    .perf-card h3{font-size:1.2rem;color:var(--purple);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+    .perf-card h3 i{color:var(--gold)}
+    .perf-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+    .perf-mini{background:var(--cream);border-radius:var(--radius-sm);padding:16px;text-align:center;border:1px solid var(--border)}
+    .perf-mini .val{font-size:1.6rem;font-weight:700;color:var(--purple);font-family:'Cormorant Garamond',serif}
+    .perf-mini .lbl{font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+    .perf-score-ring{width:120px;height:120px;margin:0 auto 16px;position:relative;display:flex;align-items:center;justify-content:center}
+    .perf-score-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+    .perf-score-ring .score-text{font-size:1.8rem;font-weight:700;color:var(--purple);font-family:'Cormorant Garamond',serif;z-index:1}
+    .dues-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);font-size:0.9rem}
+    .dues-row:last-child{border-bottom:none}
+    .dues-month{color:var(--text-dark);font-weight:500}
+    .dues-amount{color:var(--gold-dim);font-weight:600}
+    /* LOADING OVERLAY */
+    .loading-overlay{position:fixed;inset:0;background:rgba(44,22,84,0.85);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+    .loading-overlay p{color:var(--gold);font-size:1rem;letter-spacing:1px}
+    .spinner{width:48px;height:48px;border:4px solid rgba(201,168,76,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    /* PENDING APPROVAL */
+    .pending-screen{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}
+    .pending-screen .icon{font-size:4rem;color:var(--warn);margin-bottom:20px}
+    .pending-screen h2{color:var(--purple);margin-bottom:12px}
+    .pending-screen p{color:var(--text-mid);max-width:420px;margin:0 auto 24px}
+    /* TOAST */
+    #toast{position:fixed;bottom:32px;right:32px;z-index:9999;background:var(--purple);color:var(--white);border:1px solid var(--gold);border-radius:var(--radius);padding:16px 24px;font-size:0.9rem;box-shadow:var(--shadow);transform:translateY(20px);opacity:0;transition:var(--transition);pointer-events:none;max-width:320px}
+    #toast.show{transform:translateY(0);opacity:1}
+    #toast i{margin-right:8px;color:var(--gold)}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
+    @media(max-width:1024px){
+      .voices-grid{grid-template-columns:repeat(2,1fr)}
+      .leaders-grid{grid-template-columns:repeat(2,1fr)}
+      .stats-grid{grid-template-columns:repeat(2,1fr)}
+      .gallery-grid{grid-template-columns:repeat(2,1fr)}
+      .footer-grid{grid-template-columns:1fr 1fr}
+      .programs-grid{grid-template-columns:1fr 1fr}
+      .perf-stats-row{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:768px){
+      .nav-links,.nav-actions{display:none}
+      .hamburger{display:flex}
+      .about-grid,.join-grid,.contact-grid,.vision-content,.schedule-grid{grid-template-columns:1fr}
+      .about-badge{position:static;margin-top:24px;display:inline-block}
+      .programs-grid,.leaders-grid,.voices-grid{grid-template-columns:1fr}
+      .gallery-grid{grid-template-columns:1fr 1fr}
+      .portal-sidebar{display:none}
+      .stats-grid{grid-template-columns:1fr 1fr}
+      .charts-grid{grid-template-columns:1fr}
+      .att-form{grid-template-columns:1fr}
+      .footer-grid{grid-template-columns:1fr}
+      .hero-title{font-size:2.5rem}
+      .vision-pillars{grid-template-columns:1fr}
+      .portal-subpage{padding:20px}
+      .perf-stats-row{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:480px){
+      .stats-grid{grid-template-columns:1fr}
+      .login-card{padding:32px 24px}
+      .gallery-grid{grid-template-columns:1fr}
+      .perf-stats-row{grid-template-columns:1fr 1fr}
+    }
+  </style>
 </head>
-
 <body>
 
-<h1>🎤 Express Yourself System</h1>
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay" style="display:none;">
+  <div class="spinner"></div>
+  <p id="loadingMsg">Verifying credentials...</p>
+</div>
 
-<div id="app">
-  <div id="loginSection">
-    <h2>🔑 Judge Login</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="container nav-inner">
+    <div class="nav-logo" onclick="showPublic('hero')" style="cursor:pointer">
+      <div class="icon"><i class="fas fa-music"></i></div>
       <div>
-        <label>Name</label>
-        <input id="loginName" placeholder="Your name">
-      </div>
-      <div>
-        <label>Password</label>
-        <input type="password" id="loginPass" placeholder="Your password">
+        <div class="name">Eternal Praise Family</div>
+        <div class="sub">Choir Ministry</div>
       </div>
     </div>
-    <button id="loginBtn" style="width: 100%;">Login as Judge</button>
-    <div id="loginMsg"></div>
+    <ul class="nav-links">
+      <li><a href="#" onclick="showPublic('hero');return false;" class="nav-link" data-section="hero">Home</a></li>
+      <li><a href="#" onclick="showPublic('about');return false;" class="nav-link" data-section="about">About</a></li>
+      <li><a href="#" onclick="showPublic('programs');return false;" class="nav-link" data-section="programs">Programs</a></li>
+      <li><a href="#" onclick="showPublic('leadership');return false;" class="nav-link" data-section="leadership">Leadership</a></li>
+      <li><a href="#" onclick="showPublic('gallery');return false;" class="nav-link" data-section="gallery">Gallery</a></li>
+      <li><a href="#" onclick="showPublic('contact');return false;" class="nav-link" data-section="contact">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn btn-outline btn-sm" onclick="showPublic('join')">Join the Choir</button>
+      <button class="btn btn-gold btn-sm" onclick="showPage('login')"><i class="fas fa-lock"></i> Member Login</button>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleMobile()">
+      <span></span><span></span><span></span>
+    </button>
   </div>
-
-  <div id="scoreForm" style="display:none;">
-    <button class="logout" id="logoutBtn">Logout</button>
-    <h2 style="color:gold;">Judge Panel</h2>
-  
-<label>Judge Name</label>
-<input id="judge" readonly style="background:#333; color:gold;">
-
-<label>Contestant Name</label>
-<input id="name" placeholder="Name of contestant">
-   
-    <div class="grid">
-  <div class="box">
-    <label>Pitch (20)</label>
-    <input type="number" id="pitch" placeholder="Tone & Key accuracy">
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#" onclick="showPublic('hero');toggleMobile();return false;">Home</a>
+    <a href="#" onclick="showPublic('about');toggleMobile();return false;">About</a>
+    <a href="#" onclick="showPublic('programs');toggleMobile();return false;">Programs</a>
+    <a href="#" onclick="showPublic('leadership');toggleMobile();return false;">Leadership</a>
+    <a href="#" onclick="showPublic('gallery');toggleMobile();return false;">Gallery</a>
+    <a href="#" onclick="showPublic('contact');toggleMobile();return false;">Contact</a>
+    <a href="#" onclick="showPublic('join');toggleMobile();return false;" style="color:var(--gold)">Join the Choir</a>
+    <a href="#" onclick="showPage('login');toggleMobile();return false;" style="color:var(--gold)"><i class="fas fa-lock"></i> Member Login</a>
   </div>
+</nav>
 
-  <div class="box">
-    <label>Diction (15)</label>
-    <input type="number" id="diction" placeholder="Lyrics clarity & pronunciation">
-  </div>
+<!-- PUBLIC WRAPPER -->
+<div id="public-wrap">
+  <!-- HERO -->
+  <section id="hero" class="page-section active">
+    <div class="container hero-content">
+      <div class="hero-eyebrow">
+        <div class="line"></div><span>Welcome to</span><div class="line"></div>
+      </div>
+      <h1 class="hero-title">Eternal <em>Praise</em><br>Family</h1>
+      <p class="hero-mission">A Spirit-filled choir ministry dedicated to excellence in worship, unity in song, and the transformative power of praise.</p>
+      <div class="hero-ctas">
+        <button class="btn btn-gold" onclick="showPublic('join')"><i class="fas fa-hands-praying"></i> Join Us</button>
+        <button class="btn btn-outline" onclick="showPage('login')"><i class="fas fa-lock"></i> Member Login</button>
+        <button class="btn btn-outline" onclick="showPublic('about')"><i class="fas fa-info-circle"></i> Learn More</button>
+      </div>
+      <div class="hero-announcements">
+        <p class="announce-label"><i class="fas fa-bullhorn"></i> &nbsp; Latest Announcements</p>
+        <div class="announce-cards" id="heroAnnouncements"></div>
+      </div>
+    </div>
+    <div class="hero-scroll"><i class="fas fa-chevron-down"></i><span>Scroll</span></div>
+  </section>
 
-  <div class="box">
-    <label>Rhythm (15)</label>
-    <input type="number" id="rhythm" placeholder="Timing & flow consistency">
-  </div>
+  <!-- ABOUT -->
+  <section id="about" class="page-section">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-image-wrap">
+          <div style="background:linear-gradient(135deg,var(--purple),var(--purple-mid));border-radius:var(--radius);height:480px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+            <i class="fas fa-music" style="font-size:4rem;color:var(--gold);opacity:0.6;"></i>
+            <p style="color:rgba(255,255,255,0.4);font-size:0.85rem;text-align:center;padding:0 20px;">Choir photo — place your image here</p>
+          </div>
+          <div class="about-badge">
+            <div class="num">2026</div>
+            <div class="label">Est. March 15th</div>
+          </div>
+        </div>
+        <div>
+          <span class="section-tag">Our Story</span>
+          <h2 class="section-title">A Ministry Built<br>on <span class="gold">Pure Worship</span></h2>
+          <div class="divider"></div>
+          <p style="color:var(--text-mid);margin-bottom:20px;">Eternal Praise Family is a community-based gospel music ministry founded by Pastor Attah-Nti Samuel, established with a divine mandate to train singers and instrumentalists, promote disciplined worship, preserve local and classic gospel music, and serve churches and the community through organized music ministry.</p>
+          <p style="color:var(--text-mid);margin-bottom:28px;">Our choir is not merely a performance group — we are ministers of the Most High God, committed to excellence, continuous growth, and the transformative power of worship. Based at All Nation Church, behind Page 4, off Kenyasi Road, Kumasi-Ashanti.</p>
+          <ul class="values-list">
+            <li><i class="fas fa-star"></i><span><strong>Excellence:</strong> We give our best to God in every rehearsal and ministration.</span></li>
+            <li><i class="fas fa-users"></i><span><strong>Community:</strong> We are a family bound by love, prayer, and shared purpose.</span></li>
+            <li><i class="fas fa-cross"></i><span><strong>Spiritual Depth:</strong> Our music flows from a deep personal walk with God.</span></li>
+            <li><i class="fas fa-book-open"></i><span><strong>Growth:</strong> We invest in training, voice development, and music literacy.</span></li>
+          </ul>
+          <div style="margin-top:28px;display:flex;gap:16px;flex-wrap:wrap;">
+            <button class="btn btn-gold" onclick="showPublic('join')">Join the Family</button>
+            <button class="btn btn-outline" onclick="showPublic('vision')">Our Vision</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <div class="box">
-    <label>Technique (10)</label>
-    <input type="number" id="mic" placeholder="Mic control & voice handling">
-  </div>
+  <!-- VOICE GROUPS -->
+  <section id="voices" class="page-section">
+    <div class="container">
+      <span class="section-tag" style="color:var(--gold);">Voice Parts</span>
+      <h2 class="section-title" style="color:var(--white);">Our Voice <span class="gold">Groups</span></h2>
+      <div class="divider"></div>
+      <div class="voices-grid">
+        <div class="voice-card"><div class="voice-icon" style="background:rgba(201,168,76,0.15)">🎵</div><h3>Soprano</h3><p>The highest voice range. Sopranos carry the melody and lead the harmony in most arrangements.</p><div class="count" id="sopranoCount">— members</div></div>
+        <div class="voice-card"><div class="voice-icon" style="background:rgba(201,168,76,0.15)">🎶</div><h3>Alto</h3><p>The low female voice, providing rich harmony and depth that anchors the female section.</p><div class="count" id="altoCount">— members</div></div>
+        <div class="voice-card"><div class="voice-icon" style="background:rgba(201,168,76,0.15)">🎼</div><h3>Tenor</h3><p>The high male voice, bridging between the male bass and the upper female harmonies.</p><div class="count" id="tenorCount">— members</div></div>
+        <div class="voice-card"><div class="voice-icon" style="background:rgba(201,168,76,0.15)">🎤</div><h3>Bass</h3><p>The deep male voice, forming the powerful foundation upon which all other voices rest.</p><div class="count" id="bassCount">— members</div></div>
+      </div>
+    </div>
+  </section>
 
-  <div class="box">
-    <label>Performance (15)</label>
-    <input type="number" id="performance" placeholder="Stage presence, confidence & presentation">
-  </div>
+  <!-- PROGRAMS -->
+  <section id="programs" class="page-section">
+    <div class="container">
+      <span class="section-tag">Upcoming</span>
+      <h2 class="section-title">Programs &amp; <span class="gold">Events</span></h2>
+      <div class="divider"></div>
+      <div class="programs-grid" id="programsGrid"></div>
+    </div>
+  </section>
 
-  <div class="box">
-    <label>Delivery (10)</label>
-    <input type="number" id="delivery" placeholder="Expression & communication">
-  </div>
+  <!-- SCHEDULE -->
+  <section id="schedule" class="page-section">
+    <div class="container">
+      <span class="section-tag">Rehearsals</span>
+      <h2 class="section-title">Weekly <span class="gold">Schedule</span></h2>
+      <div class="divider"></div>
+      <div class="schedule-grid">
+        <div class="schedule-card">
+          <h3><i class="fas fa-calendar-week" style="color:var(--gold);margin-right:8px;"></i> Regular Rehearsals &amp; Services</h3>
+          <div class="schedule-item"><span class="sched-day">Thursday</span><span class="sched-time">6:00 PM – 8:00 PM</span><span class="badge badge-blue">Instrumentalists</span></div>
+          <div class="schedule-item"><span class="sched-day">Sunday</span><span class="sched-time">2:00 PM – 6:00 PM</span><span class="badge badge-gold">Entire Choir</span></div>
+        </div>
+        <div class="schedule-card">
+          <h3><i class="fas fa-note-sticky" style="color:var(--gold);margin-right:8px;"></i> Song Ministration List</h3>
+          <div class="schedule-item"><span>Praise Medley</span><span class="badge badge-gold">Sunday</span></div>
+          <div class="schedule-item"><span>Holy Spirit – RCCG Mass Choir</span><span class="badge badge-green">Rehearsal</span></div>
+          <div class="schedule-item"><span>You Are Great – Michael Smith</span><span class="badge badge-gold">Sunday</span></div>
+          <div class="schedule-item"><span>Hallelujah Chorus</span><span class="badge badge-gray">Special</span></div>
+          <div class="schedule-item"><span>Great Is Thy Faithfulness</span><span class="badge badge-gold">Sunday</span></div>
+          <div class="schedule-item"><span>Worship Medley Set</span><span class="badge badge-green">Rehearsal</span></div>
+        </div>
+      </div>
+      <div style="margin-top:32px;"><div class="schedule-card"><h3><i class="fas fa-shirt" style="color:var(--gold);margin-right:8px;"></i> Choir Uniform Guide</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px;"><div class="schedule-item" style="flex-direction:column;align-items:flex-start;gap:4px;"><strong style="color:var(--purple);">Sunday Service</strong><span class="sched-time">White robe + gold sash</span></div><div class="schedule-item" style="flex-direction:column;align-items:flex-start;gap:4px;"><strong style="color:var(--purple);">Special Programs</strong><span class="sched-time">Purple robe + gold accessories</span></div><div class="schedule-item" style="flex-direction:column;align-items:flex-start;gap:4px;"><strong style="color:var(--purple);">Rehearsals</strong><span class="sched-time">Choir T-shirt + black trousers/skirt</span></div></div></div></div>
+    </div>
+  </section>
 
-  <div class="box">
-    <label>Creativity (10)</label>
-    <input type="number" id="creativity" placeholder="Originality & style">
-  </div>
+  <!-- LEADERSHIP -->
+  <section id="leadership" class="page-section">
+    <div class="container">
+      <span class="section-tag">Executives</span>
+      <h2 class="section-title">Our <span class="gold">Leadership</span></h2>
+      <div class="divider"></div>
+      <div style="margin-bottom:32px;"><span class="section-tag" style="font-size:10px;">Founder &amp; President</span><div class="leaders-grid" style="grid-template-columns:repeat(1,280px);"><div class="leader-card"><div class="leader-avatar" style="background:linear-gradient(135deg,var(--gold-dim),var(--gold));"><i class="fas fa-crown" style="color:var(--purple);"></i></div><div class="leader-info"><h3>Pastor Attah-Nti Samuel</h3><p class="leader-role">Founder &amp; President</p><p class="leader-voice">Vision Bearer · Est. 2026</p></div></div></div></div>
+      <span class="section-tag" style="font-size:10px;">Executive Officers</span>
+      <div class="leaders-grid">
+        <div class="leader-card"><div class="leader-avatar"><i class="fas fa-user"></i></div><div class="leader-info"><h3>Secretary &amp; Treasurer</h3><p class="leader-role">Secretary / Treasurer</p><p class="leader-voice">Records · Finance · Correspondence</p></div></div>
+        <div class="leader-card"><div class="leader-avatar"><i class="fas fa-music"></i></div><div class="leader-info"><h3>Music Director</h3><p class="leader-role">Music Director</p><p class="leader-voice">Training · Song Selection · Vocal Parts</p></div></div>
+        <div class="leader-card"><div class="leader-avatar"><i class="fas fa-calendar-check"></i></div><div class="leader-info"><h3>Organizer</h3><p class="leader-role">Organizer</p><p class="leader-voice">Logistics · Events · Equipment</p></div></div>
+        <div class="leader-card"><div class="leader-avatar"><i class="fas fa-heart-pulse"></i></div><div class="leader-info"><h3>Membership &amp; Welfare Officer</h3><p class="leader-role">Membership &amp; Welfare</p><p class="leader-voice">Registration · Attendance · Welfare</p></div></div>
+        <div class="leader-card"><div class="leader-avatar"><i class="fas fa-bullhorn"></i></div><div class="leader-info"><h3>Publicity Officer</h3><p class="leader-role">Publicity Officer</p><p class="leader-voice">Social Media · Flyers · Public Image</p></div></div>
+        <div class="leader-card"><div class="leader-avatar"><i class="fas fa-microphone-lines"></i></div><div class="leader-info"><h3>Sound &amp; Media Engineer</h3><p class="leader-role">Sound &amp; Media</p><p class="leader-voice">Audio · Recording · Media Files</p></div></div>
+        <div class="leader-card"><div class="leader-avatar"><i class="fas fa-guitar"></i></div><div class="leader-info"><h3>Bright Agyei</h3><p class="leader-role">Head of Instrumentalists</p><p class="leader-voice">Instruments · Thursday Rehearsals</p></div></div>
+      </div>
+    </div>
+  </section>
 
-  <div class="box">
-    <label>Impact (5)</label>
-    <input type="number" id="impact" placeholder="Audience connection & effect">
+  <!-- GALLERY -->
+  <section id="gallery" class="page-section">
+    <div class="container">
+      <span class="section-tag" style="color:var(--gold);">Memories</span>
+      <h2 class="section-title" style="color:var(--white);">Ministry <span class="gold">Gallery</span></h2>
+      <div class="divider"></div>
+      <div class="gallery-grid">
+        <div class="gallery-item tall" style="background:linear-gradient(135deg,rgba(61,33,115,0.8),rgba(44,22,84,0.9))"><i class="fas fa-image" style="font-size:3rem;color:var(--gold);opacity:0.5;"></i><div class="gallery-overlay"><i class="fas fa-expand"></i></div><div class="gallery-placeholder" style="position:absolute;bottom:12px;">Sunday Service</div></div>
+        <div class="gallery-item" style="background:linear-gradient(135deg,#3D2173,#5a3a9a)"><i class="fas fa-microphone" style="font-size:2rem;color:var(--gold);opacity:0.5;"></i><div class="gallery-overlay"><i class="fas fa-expand"></i></div></div>
+        <div class="gallery-item" style="background:linear-gradient(135deg,#2C1654,#3D2173)"><i class="fas fa-music" style="font-size:2rem;color:var(--gold);opacity:0.5;"></i><div class="gallery-overlay"><i class="fas fa-expand"></i></div></div>
+        <div class="gallery-item wide" style="background:linear-gradient(135deg,#5a3a9a,#3D2173)"><i class="fas fa-users" style="font-size:2.5rem;color:var(--gold);opacity:0.5;"></i><div class="gallery-overlay"><i class="fas fa-expand"></i></div><div class="gallery-placeholder" style="position:absolute;bottom:12px;">Choir Concert</div></div>
+        <div class="gallery-item" style="background:linear-gradient(135deg,#2C1654,#5a3a9a)"><i class="fas fa-guitar" style="font-size:2rem;color:var(--gold);opacity:0.5;"></i><div class="gallery-overlay"><i class="fas fa-expand"></i></div></div>
+        <div class="gallery-item" style="background:linear-gradient(135deg,#3D2173,#2C1654)"><i class="fas fa-church" style="font-size:2rem;color:var(--gold);opacity:0.5;"></i><div class="gallery-overlay"><i class="fas fa-expand"></i></div></div>
+        <div class="gallery-item tall" style="background:linear-gradient(135deg,#5a3a9a,#2C1654)"><i class="fas fa-star" style="font-size:3rem;color:var(--gold);opacity:0.5;"></i><div class="gallery-overlay"><i class="fas fa-expand"></i></div><div class="gallery-placeholder" style="position:absolute;bottom:12px;">Special Program</div></div>
+        <div class="gallery-item" style="background:linear-gradient(135deg,#3D2173,#5a3a9a)"><i class="fas fa-hands-praying" style="font-size:2rem;color:var(--gold);opacity:0.5;"></i><div class="gallery-overlay"><i class="fas fa-expand"></i></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VISION -->
+  <section id="vision" class="page-section">
+    <div class="container">
+      <span class="section-tag">Ministry Vision</span>
+      <h2 class="section-title">Where We Are <span class="gold">Going</span></h2>
+      <div class="divider"></div>
+      <div class="vision-content">
+        <div>
+          <p style="color:var(--text-mid);font-size:1.05rem;line-height:1.9;margin-bottom:24px;">Our vision is to be a choir that doesn't just sing songs but transforms lives through the power of anointed worship.</p>
+          <p style="color:var(--text-mid);margin-bottom:24px;">We aim to establish a fully equipped Music Academy, develop regional outreach concerts, and release our first studio worship album.</p>
+          <div class="vision-pillars">
+            <div class="pillar"><h4><i class="fas fa-cross" style="color:var(--gold);margin-right:6px;"></i> Spiritual Excellence</h4><p>Every voice must be submitted to the Holy Spirit before it is trained in technique.</p></div>
+            <div class="pillar"><h4><i class="fas fa-graduation-cap" style="color:var(--gold);margin-right:6px;"></i> Music Education</h4><p>Ongoing training in music theory, sight-reading, and vocal development for all members.</p></div>
+            <div class="pillar"><h4><i class="fas fa-satellite-dish" style="color:var(--gold);margin-right:6px;"></i> Outreach Ministry</h4><p>Taking the sound of praise beyond our walls into hospitals, schools, and communities.</p></div>
+            <div class="pillar"><h4><i class="fas fa-compact-disc" style="color:var(--gold);margin-right:6px;"></i> Media Production</h4><p>Recording and releasing high-quality local and classic gospel worship content.</p></div>
+          </div>
+        </div>
+        <div class="vision-sidebar">
+          <div class="sidebar-card"><h4><i class="fas fa-book-open"></i> Sheet Music Library</h4><ul><li><i class="fas fa-file-pdf"></i> Praise Medley (SATB)</li><li><i class="fas fa-file-pdf"></i> Christmas Cantata</li><li><i class="fas fa-file-pdf"></i> Easter Arrangement</li><li><i class="fas fa-file-pdf"></i> Voice Training Scales</li></ul><p style="color:rgba(255,255,255,0.4);font-size:0.78rem;margin-top:12px;">Contact secretary for access links</p></div>
+          <div class="sidebar-card"><h4><i class="fas fa-headphones"></i> Practice Audio</h4><ul><li><i class="fas fa-play-circle"></i> Soprano Part – Track 1</li><li><i class="fas fa-play-circle"></i> Alto Part – Track 1</li><li><i class="fas fa-play-circle"></i> Tenor Part – Track 1</li><li><i class="fas fa-play-circle"></i> Bass Part – Track 1</li></ul><p style="color:rgba(255,255,255,0.4);font-size:0.78rem;margin-top:12px;">Links distributed on WhatsApp</p></div>
+          <div class="sidebar-card"><h4><i class="fas fa-heart"></i> Testimonies</h4><p style="color:rgba(255,255,255,0.7);font-size:0.88rem;line-height:1.7;margin-bottom:0;">"I was healed of depression through the worship at EPF. When the choir ministered, the Holy Spirit showed up." — Choir Member, 2026</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JOIN — DO NOT MODIFY THIS SECTION — REGISTRATION WORKS PERFECTLY -->
+  <section id="join" class="page-section">
+    <div class="container">
+      <div class="join-grid">
+        <div class="join-info">
+          <span class="section-tag" style="color:var(--gold-light);">Membership</span>
+          <h2>Join the <em>Eternal<br>Praise Family</em></h2>
+          <p>We welcome worshippers of all vocal ranges who have a heart for God, a love for music, and a commitment to excellence. No formal music training required — just a willing heart.</p>
+          <ul class="join-perks">
+            <li><i class="fas fa-check-circle"></i> Vocal training &amp; music literacy classes</li>
+            <li><i class="fas fa-check-circle"></i> Lifelong friendships &amp; community</li>
+            <li><i class="fas fa-check-circle"></i> Opportunities to lead in worship</li>
+            <li><i class="fas fa-check-circle"></i> Performance at special programs &amp; events</li>
+            <li><i class="fas fa-check-circle"></i> Access to choir library &amp; resources</li>
+            <li><i class="fas fa-check-circle"></i> Registration: GHS 100–200 · Monthly dues: GHS 20</li>
+          </ul>
+        </div>
+        <!-- REGISTRATION FORM — UNTOUCHED — DO NOT MODIFY -->
+        <form class="join-form-wrap" onsubmit="submitJoin(event)">
+          <h3 style="color:var(--gold);font-size:1.4rem;margin-bottom:24px;font-family:'Cormorant Garamond',serif;">
+            <i class="fas fa-hands-praying"></i> Application Form
+          </h3>
+          <div class="form-group"><label>Full Name</label><input type="text" id="joinName" name="full_name" placeholder="Your full name" required minlength="3"></div>
+          <div class="form-group"><label>Email Address</label><input type="email" id="joinEmail" name="user_email" placeholder="your@email.com" required></div>
+          <div class="form-group"><label>Phone Number</label><input type="tel" id="joinPhone" name="user_phone" placeholder="+233 xxx xxx xxx" required></div>
+          <div class="form-group">
+            <label>PASSWORD</label>
+            <input type="password" name="password" id="reg-password" placeholder="Create Password" required minlength="12" maxlength="64"
+                   style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 5px; color: white; outline: none; margin-bottom: 10px;">
+          </div>
+          <div class="form-group">
+            <label>CONFIRM PASSWORD</label>
+            <input type="password" id="confirm_password" placeholder="Confirm Password" required minlength="12" maxlength="64"
+                   style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 5px; color: white; outline: none;">
+          </div>
+          <div class="form-group">
+            <label>Voice Type</label>
+            <select id="joinVoice" name="voice">
+              <option value="">Select voice part</option>
+              <option value="soprano">Soprano</option>
+              <option value="alto">Alto</option>
+              <option value="tenor">Tenor</option>
+              <option value="bass">Bass</option>
+              <option value="instrumentalist">Instrumentalist</option>
+              <option value="unknown">Not Sure</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Musical Background</label>
+            <select id="joinBackground" name="background">
+              <option value="none">None – Just love to worship</option>
+              <option value="informal">Some informal experience</option>
+              <option value="formal">Formal music training</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Why do you want to join?</label>
+            <textarea id="joinReason" name="reason" rows="3" placeholder="Share your heart..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center;" id="joinSubmitBtn">
+            <i class="fas fa-paper-plane"></i> Submit Application
+          </button>
+        </form>
+        <!-- END REGISTRATION FORM -->
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="page-section">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-info">
+          <span class="section-tag">Get In Touch</span>
+          <h2>Contact <span class="gold">Us</span></h2>
+          <div class="divider"></div>
+          <p>We'd love to hear from you. Reach out for enquiries, partnerships, or to know more about our ministry.</p>
+          <div class="contact-details">
+            <div class="contact-item"><div class="icon-wrap"><i class="fas fa-map-marker-alt"></i></div><div class="text"><h5>Location</h5><p>All Nation Church, Behind Page 4, Off Kenyasi Road, Kumasi-Ashanti</p></div></div>
+            <div class="contact-item"><div class="icon-wrap"><i class="fas fa-phone"></i></div><div class="text"><h5>Phone</h5><p>0554244674</p></div></div>
+            <div class="contact-item"><div class="icon-wrap"><i class="fas fa-envelope"></i></div><div class="text"><h5>Email</h5><p>info@eternalpraisfamily.org</p></div></div>
+            <div class="contact-item"><div class="icon-wrap"><i class="fas fa-clock"></i></div><div class="text"><h5>Office Hours</h5><p>Thursday: 6PM – 8PM · Sunday: 2PM – 6PM</p></div></div>
+          </div>
+        </div>
+        <form class="contact-form-wrap" onsubmit="submitContact(event)">
+          <h3 style="color:var(--purple);font-size:1.4rem;margin-bottom:24px;font-family:'Cormorant Garamond',serif;">Send Us a Message</h3>
+          <div class="form-group"><label style="color:var(--text-muted);">Name</label><input type="text" id="cName" name="name" placeholder="Your name"></div>
+          <div class="form-group"><label style="color:var(--text-muted);">Email</label><input type="email" id="cEmail" name="email" placeholder="your@email.com"></div>
+          <div class="form-group"><label style="color:var(--text-muted);">Subject</label><input type="text" id="cSubject" name="subject" placeholder="Message subject"></div>
+          <div class="form-group"><label style="color:var(--text-muted);">Message</label><textarea id="cMessage" name="message" rows="5" placeholder="Your message..."></textarea></div>
+          <button type="submit" class="btn btn-purple" style="width:100%;justify-content:center;" id="contactSubmitBtn"><i class="fas fa-paper-plane"></i> Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="footer" class="page-section active" style="display:block!important;">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo"><div class="icon"><i class="fas fa-music"></i></div><div><div class="name">Eternal Praise Family</div><div class="sub" style="font-size:0.65rem;">Choir Ministry</div></div></div>
+          <p>A Spirit-filled choir dedicated to excellence in worship and ministry. Founded by Pastor Attah-Nti Samuel. Est. 15th March 2026.</p>
+          <div class="social-links" style="margin-top:20px;"><a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-youtube"></i></a><a href="#"><i class="fab fa-whatsapp"></i></a></div>
+        </div>
+        <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="#" onclick="showPublic('about');return false;">About Us</a></li><li><a href="#" onclick="showPublic('leadership');return false;">Leadership</a></li><li><a href="#" onclick="showPublic('programs');return false;">Programs</a></li><li><a href="#" onclick="showPublic('gallery');return false;">Gallery</a></li><li><a href="#" onclick="showPublic('vision');return false;">Vision</a></li></ul></div>
+        <div class="footer-col"><h4>Ministry</h4><ul><li><a href="#" onclick="showPublic('schedule');return false;">Rehearsal Schedule</a></li><li><a href="#" onclick="showPublic('voices');return false;">Voice Groups</a></li><li><a href="#" onclick="showPublic('join');return false;">Join the Choir</a></li><li><a href="#" onclick="showPage('login');return false;">Member Login</a></li></ul></div>
+        <div class="footer-col"><h4>Contact</h4><ul><li><a href="#">All Nation Church, Kenyasi Rd, Kumasi</a></li><li><a href="#">0554244674</a></li><li><a href="#">info@eternalpraisfamily.org</a></li></ul></div>
+      </div>
+      <div class="footer-bottom"><span>© 2026 Eternal Praise Family. All rights reserved.</span><span style="color:rgba(255,255,255,0.3);">Built for the glory of God</span></div>
+    </div>
+  </footer>
+</div><!-- /public-wrap -->
+
+<!-- LOGIN PAGE -->
+<div id="login-page" style="display:none;">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="icon"><i class="fas fa-music"></i></div>
+      <h2>Members Portal</h2>
+      <p>Eternal Praise Family Choir</p>
+    </div>
+    <div class="login-info">
+      <i class="fas fa-info-circle"></i> Login with your registered email and the password you set during application.
+    </div>
+    <div id="loginError" class="login-error"><i class="fas fa-exclamation-triangle"></i> <span id="loginErrorMsg">Invalid email or password, or account not yet approved.</span></div>
+    <div class="login-form">
+      <div class="form-group"><label>Email Address</label><input type="email" id="loginEmail" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="form-group" style="margin-bottom:24px;"><label>Password</label><input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn btn-gold" style="width:100%;justify-content:center;padding:14px;" id="loginBtn" onclick="doLogin()"><i class="fas fa-sign-in-alt"></i> Login to Portal</button>
+    </div>
+    <div class="login-footer">
+      <p><a href="#" onclick="showPublic('hero');return false;"><i class="fas fa-arrow-left"></i> Back to Website</a></p>
+      <p style="margin-top:8px;color:rgba(255,255,255,0.3);font-size:0.75rem;">Your account must be approved by admin before you can log in.</p>
+    </div>
   </div>
 </div>
 
-    <button class="submit" id="submitBtn">Submit Score</button>
-    <button class="reset" id="resetBtn">Clear Form</button>
-    <div class="status" id="status"></div>
-
-    <div class="history-section">
-        <h3 style="color:gold; text-align:center;">📋 Your Recently Voted</h3>
-        <table style="font-size: 0.9em;">
-            <thead>
-                <tr>
-                    <th>Contestant</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="judgeHistory"></tbody>
-        </table>
+<!-- PORTAL WRAPPER -->
+<div id="portal-wrap">
+  <div class="portal-layout">
+    <!-- SIDEBAR -->
+    <div class="portal-sidebar">
+      <div class="sidebar-user">
+        <div class="avatar" id="sidebarAvatar">?</div>
+        <div class="uname" id="sidebarName">Member</div>
+        <div class="urole" id="sidebarRole">Member</div>
+        <div class="ustatus" id="sidebarStatus"></div>
+      </div>
+      <ul class="sidebar-nav">
+        <li><a href="#" onclick="showPortal('dashboard');return false;" id="nav-dashboard" class="active"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+        <li class="section-label">My Ministry</li>
+        <li><a href="#" onclick="showPortal('myperformance');return false;" id="nav-myperformance"><i class="fas fa-trophy"></i> My Performance</a></li>
+        <li><a href="#" onclick="showPortal('mydues');return false;" id="nav-mydues"><i class="fas fa-coins"></i> My Dues</a></li>
+        <li><a href="#" onclick="showPortal('records');return false;" id="nav-records"><i class="fas fa-history"></i> My Attendance</a></li>
+        <li><a href="#" onclick="showPortal('profile');return false;" id="nav-profile"><i class="fas fa-user-cog"></i> My Profile</a></li>
+        <li><a href="#" onclick="showPortal('caution');return false;" id="nav-caution"><i class="fas fa-exclamation-triangle"></i> My Notices</a></li>
+        <!-- ADMIN ONLY NAV ITEMS -->
+        <li class="section-label" id="adminNavLabel" style="display:none;">Administration</li>
+        <li id="nav-mark-li" style="display:none;"><a href="#" onclick="showPortal('attendance');return false;" id="nav-attendance"><i class="fas fa-clipboard-check"></i> Mark Attendance</a></li>
+        <li id="nav-members-li" style="display:none;"><a href="#" onclick="showPortal('members');return false;" id="nav-members"><i class="fas fa-users"></i> All Members</a></li>
+        <li id="nav-dues-li" style="display:none;"><a href="#" onclick="showPortal('dues');return false;" id="nav-dues"><i class="fas fa-money-bill-wave"></i> Dues Manager</a></li>
+        <li id="nav-announcements-li" style="display:none;"><a href="#" onclick="showPortal('announcements');return false;" id="nav-announcements"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+        <li id="nav-allcautions-li" style="display:none;"><a href="#" onclick="showPortal('allcautions');return false;" id="nav-allcautions"><i class="fas fa-flag"></i> All Notices</a></li>
+        <li class="section-label"></li>
+        <li><a href="#" onclick="doLogout();return false;" style="color:rgba(255,100,100,0.7)!important;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      </ul>
     </div>
-  </div>
 
-  <div class="board">
-    <h2 style="color:gold;text-align:center;">🏆 Live Leaderboard</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Contestant Info</th>
-          <th>Average Score</th>
-        </tr>
-      </thead>
-      <tbody id="board"></tbody>
-    </table>
-  </div>
-</div>
+    <!-- PORTAL CONTENT -->
+    <div class="portal-content">
+
+      <!-- DASHBOARD -->
+      <div class="portal-subpage active" id="p-dashboard">
+        <div class="portal-header">
+          <div><h1>Dashboard</h1><p id="dashGreeting">Welcome back</p></div>
+          <button class="btn btn-gold btn-sm" onclick="showPublic('hero')"><i class="fas fa-globe"></i> Public Site</button>
+        </div>
+        <div id="memberStatusBanner"></div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon" style="background:#e8d5f7;"><i class="fas fa-users" style="color:var(--purple);"></i></div><div><div class="num" id="statTotal">0</div><div class="label">Total Members</div><div class="change" style="color:var(--success);">Active choir</div></div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:#d4edda;"><i class="fas fa-check-circle" style="color:var(--success);"></i></div><div><div class="num" id="statPresent">0</div><div class="label">Present Today</div><div class="change" style="color:var(--success);" id="statAttRate">0%</div></div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:#fde8e8;"><i class="fas fa-times-circle" style="color:var(--danger);"></i></div><div><div class="num" id="statAbsent">0</div><div class="label">Absent Today</div></div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:#fef3cd;"><i class="fas fa-star" style="color:var(--warn);"></i></div><div><div class="num" id="myAttScore">0%</div><div class="label">My Attendance Rate</div></div></div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-card"><h3>Monthly Attendance Trend</h3><canvas id="attendanceChart" height="200"></canvas></div>
+          <div class="chart-card"><h3>Voice Group Distribution</h3><canvas id="voiceChart" height="200"></canvas></div>
+        </div>
+        <div class="data-table-wrap">
+          <div class="table-header"><h3>Recent Attendance Records</h3><button class="btn btn-sm btn-gold" onclick="showPortal('records')">View All</button></div>
+          <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Date</th><th>Session</th><th>Status</th><th>Notes</th></tr></thead><tbody id="recentAttBody"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- MY PERFORMANCE -->
+      <div class="portal-subpage" id="p-myperformance">
+        <div class="portal-header"><div><h1>My Performance</h1><p>Your personal ministry scorecard</p></div></div>
+        <div id="memberStatusBanner2"></div>
+        <div class="perf-card">
+          <h3><i class="fas fa-trophy"></i> Overall Performance Score</h3>
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:center;flex-wrap:wrap;">
+            <div style="text-align:center;">
+              <div class="perf-score-ring" id="perfScoreRing">
+                <svg viewBox="0 0 120 120" width="120" height="120"><circle cx="60" cy="60" r="50" fill="none" stroke="#f0edf7" stroke-width="10"/><circle cx="60" cy="60" r="50" fill="none" stroke="var(--gold)" stroke-width="10" stroke-dasharray="314" id="perfArcFill" stroke-dashoffset="314" stroke-linecap="round"/></svg>
+                <div class="score-text" id="perfScoreText">—</div>
+              </div>
+              <div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">Attendance Rate</div>
+            </div>
+            <div>
+              <div class="perf-stats-row">
+                <div class="perf-mini"><div class="val" id="perfTotalSessions">0</div><div class="lbl">Sessions</div></div>
+                <div class="perf-mini"><div class="val" id="perfPresentCount">0</div><div class="lbl">Present</div></div>
+                <div class="perf-mini"><div class="val" id="perfAbsentCount">0</div><div class="lbl">Absent</div></div>
+                <div class="perf-mini"><div class="val" id="perfDuesPaid">0</div><div class="lbl">Dues Paid</div></div>
+              </div>
+              <div id="perfRating" style="margin-top:12px;padding:12px 16px;border-radius:var(--radius-sm);font-size:0.9rem;font-weight:600;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="perf-card"><h3><i class="fas fa-chart-bar"></i> Monthly Attendance Breakdown</h3><canvas id="myAttChart" height="120"></canvas></div>
+      </div>
+
+      <!-- MY DUES -->
+      <div class="portal-subpage" id="p-mydues">
+        <div class="portal-header"><div><h1>My Dues</h1><p>Track your monthly dues and payment status</p></div></div>
+        <div class="perf-card">
+          <h3><i class="fas fa-coins"></i> Dues Summary</h3>
+          <div class="perf-stats-row" style="margin-bottom:0;">
+            <div class="perf-mini"><div class="val" id="duesPaid" style="color:var(--success);">0</div><div class="lbl">Months Paid</div></div>
+            <div class="perf-mini"><div class="val" id="duesOwed" style="color:var(--danger);">0</div><div class="lbl">Months Owed</div></div>
+            <div class="perf-mini"><div class="val" id="duesTotal">GHS 0</div><div class="lbl">Total Paid</div></div>
+            <div class="perf-mini"><div class="val" id="duesBalance" style="color:var(--danger);">GHS 0</div><div class="lbl">Outstanding</div></div>
+          </div>
+        </div>
+        <div class="perf-card"><h3><i class="fas fa-list"></i> Monthly Dues Record</h3><div id="duesRecord"></div></div>
+        <div class="perf-card">
+          <h3><i class="fas fa-paper-plane"></i> Submit Dues Payment Notification</h3>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:16px;">Paid your dues? Notify the treasurer so it can be confirmed.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;flex-wrap:wrap;">
+            <div><label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;">Month</label><select id="duesMonth" style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select></div>
+            <div><label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;">Amount (GHS)</label><input type="number" id="duesAmountInput" placeholder="20" value="20" style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;"></div>
+            <div><label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;">Method</label><select id="duesMethod" style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;"><option value="cash">Cash to Treasurer</option><option value="momo">Mobile Money</option></select></div>
+          </div>
+          <button class="btn btn-gold" id="duesSubmitBtn" onclick="submitDuesNotification()"><i class="fas fa-paper-plane"></i> Notify Treasurer</button>
+        </div>
+      </div>
+
+      <!-- ATTENDANCE MARK (Admin/Secretary/Welfare) -->
+      <div class="portal-subpage" id="p-attendance">
+        <div class="portal-header"><div><h1>Mark Attendance</h1><p>Record attendance for today's session</p></div></div>
+        <div class="attendance-tools">
+          <div class="att-form">
+            <div><label>Session Type</label><select id="attType" onchange="renderAttendancePage()"><option value="rehearsal">Sunday Rehearsal</option><option value="instrumentalists">Thursday (Instrumentalists)</option><option value="service">Sunday Service</option><option value="program">Special Program</option></select></div>
+            <div><label>Date</label><input type="date" id="attDate" onchange="renderAttendancePage()"></div>
+            <button class="btn btn-gold" id="saveAttBtn" onclick="saveAttendance()"><i class="fas fa-save"></i> Save All</button>
+          </div>
+          <div id="memberAttList"></div>
+        </div>
+      </div>
+
+      <!-- MY ATTENDANCE RECORDS -->
+      <div class="portal-subpage" id="p-records">
+        <div class="portal-header"><div><h1>My Attendance</h1><p>Your personal attendance history</p></div></div>
+        <div class="data-table-wrap">
+          <div class="table-header">
+            <h3>Attendance History</h3>
+            <select id="recordFilterStatus" onchange="loadRecords()" style="padding:6px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;"><option value="">All Status</option><option value="present">Present</option><option value="absent">Absent</option></select>
+          </div>
+          <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Date</th><th>Session</th><th>Status</th><th>Notes</th></tr></thead><tbody id="recordsBody"></tbody></table></div>
+        </div>
+        <div style="margin-top:20px;"><div class="attendance-tools">
+          <h3 style="color:var(--purple);margin-bottom:16px;font-size:1.1rem;">Submit Excuse for Absence</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+            <div><label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">Date of Absence</label><input type="date" id="excuseDate" style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;"></div>
+            <div><label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">Reason</label><input type="text" id="excuseReason" placeholder="Brief reason for absence" style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;"></div>
+          </div>
+          <button class="btn btn-purple" id="excuseSubmitBtn" onclick="submitExcuse()"><i class="fas fa-paper-plane"></i> Submit Excuse</button>
+        </div></div>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="portal-subpage" id="p-profile">
+        <div class="portal-header"><div><h1>My Profile</h1><p>Update your personal information</p></div></div>
+        <div class="profile-card">
+          <div class="profile-avatar-wrap">
+            <div class="profile-avatar" id="profileAvatar">?</div>
+            <h3 style="color:var(--purple);font-size:1.3rem;" id="profileName">Member</h3>
+            <p style="color:var(--text-muted);font-size:0.85rem;" id="profileRole">—</p>
+            <p style="font-size:0.8rem;margin-top:4px;" id="profileMemberStatus">—</p>
+          </div>
+          <div class="profile-form">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <div class="form-group"><label>First Name</label><input type="text" id="pFirstName"></div>
+              <div class="form-group"><label>Last Name</label><input type="text" id="pLastName"></div>
+            </div>
+            <div class="form-group"><label>Email</label><input type="email" id="pEmail" readonly style="opacity:0.6;"></div>
+            <div class="form-group"><label>Phone</label><input type="tel" id="pPhone"></div>
+            <div class="form-group"><label>Voice Type</label><select id="pVoice"><option value="soprano">Soprano</option><option value="alto">Alto</option><option value="tenor">Tenor</option><option value="bass">Bass</option><option value="instrumentalist">Instrumentalist</option></select></div>
+            <div class="form-group"><label>New Password (leave blank to keep current)</label><input type="password" id="pNewPass" placeholder="New password (min 12 chars)" minlength="12"></div>
+            <button class="btn btn-gold" onclick="saveProfile()"><i class="fas fa-save"></i> Save Changes</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MY CAUTION NOTICES -->
+      <div class="portal-subpage" id="p-caution">
+        <div class="portal-header"><div><h1>My Notices</h1><p>Your personal caution and warning notices</p></div></div>
+        <div id="cautionList"></div>
+      </div>
+
+      <!-- ALL NOTICES (Admin only) -->
+      <div class="portal-subpage" id="p-allcautions">
+        <div class="portal-header">
+          <div><h1>All Notices</h1><p>Issue and manage caution notices</p></div>
+          <button class="btn btn-gold btn-sm" onclick="showIssueCautionForm()"><i class="fas fa-plus"></i> Issue Notice</button>
+        </div>
+        <div id="issueCautionForm" style="display:none;margin-bottom:24px;" class="attendance-tools">
+          <h3 style="color:var(--purple);margin-bottom:16px;font-size:1.1rem;">Issue Caution Notice</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+            <div><label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;">Member</label><select id="cautionMember" style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;"></select></div>
+            <div><label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;">Notice Type</label><select id="cautionType" style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;"><option value="caution">First Caution</option><option value="warning">Serious Warning</option><option value="dismissal">At Risk of Dismissal</option></select></div>
+          </div>
+          <div style="margin-bottom:16px;"><label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;">Reason</label><textarea id="cautionReason" rows="3" placeholder="Explain the reason for this notice..." style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;"></textarea></div>
+          <div style="display:flex;gap:10px;"><button class="btn btn-danger" onclick="issueCaution()"><i class="fas fa-exclamation-triangle"></i> Issue Notice</button><button class="btn btn-outline btn-sm" onclick="document.getElementById('issueCautionForm').style.display='none'">Cancel</button></div>
+        </div>
+        <div id="allCautionsList"></div>
+      </div>
+
+      <!-- MEMBERS LIST (Admin) -->
+      <div class="portal-subpage" id="p-members">
+        <div class="portal-header">
+          <div><h1>All Members</h1><p>Manage choir membership roster</p></div>
+          <button class="btn btn-gold btn-sm" onclick="showAddMemberForm()"><i class="fas fa-plus"></i> Add Member</button>
+        </div>
+        <div id="addMemberForm" style="display:none;margin-bottom:24px;" class="attendance-tools">
+          <h3 style="color:var(--purple);margin-bottom:16px;font-size:1.1rem;">Add New Member Manually</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;">
+            <div><label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;">Full Name</label><input type="text" id="newMemberName" placeholder="Full name" style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;"></div>
+            <div><label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;">Email</label><input type="email" id="newMemberEmail" placeholder="email@example.com" style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;"></div>
+            <div><label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;">Voice</label><select id="newMemberVoice" style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;"><option value="soprano">Soprano</option><option value="alto">Alto</option><option value="tenor">Tenor</option><option value="bass">Bass</option><option value="instrumentalist">Instrumentalist</option></select></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+            <div><label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;">Role</label><select id="newMemberRole" style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;"><option value="member">Member</option><option value="secretary">Secretary</option><option value="publicity">Publicity Officer</option><option value="asaphites">Head of Instrumentalists</option><option value="president">President</option><option value="developer">Developer</option></select></div>
+            <div><label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;">Password</label><input type="text" id="newMemberPass" placeholder="Set a password" style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;"></div>
+          </div>
+          <div style="display:flex;gap:10px;"><button class="btn btn-gold" onclick="addMember()"><i class="fas fa-plus"></i> Add Member</button><button class="btn btn-outline btn-sm" onclick="document.getElementById('addMemberForm').style.display='none'">Cancel</button></div>
+        </div>
+        <div class="data-table-wrap">
+          <div class="table-header"><h3>Choir Roster</h3><input type="text" id="memberSearch" placeholder="Search member..." onkeyup="renderMembersTable()" style="padding:8px 14px;border:1px solid #ddd;border-radius:50px;font-size:0.85rem;"></div>
+          <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Name</th><th>Email</th><th>Voice</th><th>Role</th><th>Status</th><th>Member Status</th><th>Action</th></tr></thead><tbody id="membersBody"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- DUES MANAGER (Admin/Secretary) -->
+      <div class="portal-subpage" id="p-dues">
+        <div class="portal-header"><div><h1>Dues Manager</h1><p>Track and confirm member dues</p></div></div>
+        <div class="data-table-wrap" style="margin-bottom:24px;">
+          <div class="table-header"><h3>Pending Dues Notifications</h3></div>
+          <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Member</th><th>Month</th><th>Amount</th><th>Method</th><th>Submitted</th><th>Status</th><th>Action</th></tr></thead><tbody id="pendingDuesBody"></tbody></table></div>
+        </div>
+        <div class="data-table-wrap">
+          <div class="table-header"><h3>All Dues Records</h3></div>
+          <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Member</th><th>Month</th><th>Amount</th><th>Status</th><th>Confirmed By</th></tr></thead><tbody id="allDuesBody"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- ANNOUNCEMENTS (Admin/Publicity) -->
+      <div class="portal-subpage" id="p-announcements">
+        <div class="portal-header">
+          <div><h1>Announcements</h1><p>Manage public announcements</p></div>
+          <button class="btn btn-gold btn-sm" onclick="showAnnounceForm()"><i class="fas fa-plus"></i> New Announcement</button>
+        </div>
+        <div id="announceForm" style="display:none;margin-bottom:24px;" class="attendance-tools">
+          <h3 style="color:var(--purple);margin-bottom:16px;font-size:1.1rem;">New Announcement</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+            <div><label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;">Title</label><input type="text" id="annTitle" placeholder="Announcement title" style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;"></div>
+            <div><label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;">Date</label><input type="date" id="annDate" style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;"></div>
+          </div>
+          <div style="margin-bottom:16px;"><label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;">Message</label><textarea id="annMessage" rows="3" placeholder="Announcement details..." style="width:100%;background:var(--cream);border:1px solid rgba(44,22,84,0.15);border-radius:var(--radius-sm);padding:11px 14px;"></textarea></div>
+          <div style="display:flex;gap:10px;"><button class="btn btn-gold" onclick="saveAnnouncement()"><i class="fas fa-bullhorn"></i> Publish</button><button class="btn btn-outline btn-sm" onclick="document.getElementById('announceForm').style.display='none'">Cancel</button></div>
+        </div>
+        <div id="announceList"></div>
+      </div>
+
+    </div><!-- /portal-content -->
+  </div><!-- /portal-layout -->
+</div><!-- /portal-wrap -->
+
+<div id="toast"></div>
 
 <script>
-const APP_URL = "https://script.google.com/macros/s/AKfycbzQ41hVIHIYzzU9-h88izrPt5s92RZDjl4XOPEtvFWhEWdtihzBcrh0JnyPsKmaq47_/exec";
+/* ================================================================
+   GOOGLE APPS SCRIPT BACKEND URL
+   Replace this with your deployed GAS Web App URL
+================================================================ */
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzJwjQDfttGHSOPH3vOxVb7KcA0cuwDBSWh4IrWN9DTGS6QGAs9DONWUZBW_k_ikypk/exec';
 
-function showLoginOnly() {
-    document.getElementById("scoreForm").style.display = "none";
-    document.getElementById("loginSection").style.display = "block";
+/* ================================================================
+   ROLE DEFINITIONS & PERMISSIONS
+================================================================ */
+const ROLES = {
+  developer:  { label:'Developer',                      level:5, canMarkAtt:true,  canManageMembers:true,  canManageDues:true,  canAnnounce:true,  canIssueCaution:true  },
+  president:  { label:'President',                      level:4, canMarkAtt:true,  canManageMembers:true,  canManageDues:true,  canAnnounce:true,  canIssueCaution:true  },
+  secretary:  { label:'Secretary / Treasurer',          level:3, canMarkAtt:true,  canManageMembers:false, canManageDues:true,  canAnnounce:false, canIssueCaution:false },
+  publicity:  { label:'Publicity Officer',              level:2, canMarkAtt:false, canManageMembers:false, canManageDues:false, canAnnounce:true,  canIssueCaution:false },
+  asaphites:  { label:'Head of Instrumentalists',      level:2, canMarkAtt:true,  canManageMembers:false, canManageDues:false, canAnnounce:false, canIssueCaution:false },
+  member:     { label:'Choir Member',                   level:1, canMarkAtt:false, canManageMembers:false, canManageDues:false, canAnnounce:false, canIssueCaution:false },
+  // Legacy admin role maps to president
+  admin:      { label:'Executive / Admin',              level:4, canMarkAtt:true,  canManageMembers:true,  canManageDues:true,  canAnnounce:true,  canIssueCaution:true  },
+};
+
+function rolePerms(role) { return ROLES[role] || ROLES['member']; }
+function hasPermission(perm) { return currentUser && rolePerms(currentUser.role)[perm] === true; }
+
+/* ================================================================
+   LOCAL STORAGE KEYS
+================================================================ */
+const KEY_USERS       = 'epf_users';
+const KEY_ATTENDANCE  = 'epf_attendance';
+const KEY_CAUTIONS    = 'epf_cautions';
+const KEY_ANNOUNCEMENTS = 'epf_announcements';
+const KEY_SESSION     = 'epf_session';
+const KEY_PROGRAMS    = 'epf_programs';
+const KEY_DUES        = 'epf_dues';
+
+/* ================================================================
+   SEED DATA — demo users for offline/local testing
+================================================================ */
+function seedData() {
+  if (!ls(KEY_USERS)) {
+    lsSet(KEY_USERS, [
+      { id:'u1', name:'Developer EPF',    email:'dev@epf.org',      password:'devpass2026!', role:'developer', voice:'tenor',       phone:'0554244674',  active:true,  approved:true  },
+      { id:'u2', name:'Pastor Attah-Nti', email:'pastor@epf.org',   password:'pastor2026!',  role:'president',  voice:'bass',        phone:'0554244674',  active:true,  approved:true  },
+      { id:'u3', name:'Abena Mensah',     email:'abena@epf.org',    password:'abena2026!',   role:'secretary',  voice:'soprano',     phone:'+233241000002',active:true, approved:true  },
+      { id:'u4', name:'Bright Agyei',     email:'bright@epf.org',   password:'bright2026!',  role:'asaphites',  voice:'instrumentalist',phone:'+233241000007',active:true,approved:true},
+      { id:'u5', name:'Grace Acheampong', email:'grace@epf.org',    password:'grace2026!',   role:'publicity',  voice:'alto',        phone:'+233241000004',active:true, approved:true  },
+      { id:'u6', name:'Samuel Asante',    email:'samuel@epf.org',   password:'samuel2026!',  role:'member',     voice:'bass',        phone:'+233241000003',active:true, approved:true  },
+      { id:'u7', name:'Emmanuel Osei',    email:'emmanuel@epf.org', password:'emma2026!',    role:'member',     voice:'tenor',       phone:'+233241000005',active:true, approved:true  },
+      { id:'u8', name:'Comfort Adusei',   email:'comfort@epf.org',  password:'comfort2026!', role:'member',     voice:'alto',        phone:'+233241000008',active:true, approved:true  },
+      // Demo easy passwords for testing
+      { id:'u9', name:'Test Member',      email:'member@epf.org',   password:'member123456', role:'member',     voice:'soprano',     phone:'+233000000000',active:true, approved:true  },
+      { id:'u10',name:'Admin User',       email:'admin@epf.org',    password:'admin1234567', role:'developer',  voice:'tenor',       phone:'0554244674',  active:true,  approved:true  },
+    ]);
+  }
+  if (!ls(KEY_ANNOUNCEMENTS)) {
+    lsSet(KEY_ANNOUNCEMENTS, [
+      { id:'a1', title:'Welcome to EPF!', date:'2026-03-15', message:'Eternal Praise Family officially launches on 15th March 2026. Registration is open. Join us at All Nation Church.', by:'dev@epf.org' },
+      { id:'a2', title:'Sunday Rehearsal Reminder', date:'2026-04-05', message:'All choir members are reminded that Sunday rehearsal runs from 2PM to 6PM at All Nation Church.', by:'dev@epf.org' },
+      { id:'a3', title:'Dues Reminder', date:'2026-04-01', message:'Monthly dues of GHS 20 are now due. Please pay to the Secretary/Treasurer.', by:'dev@epf.org' },
+    ]);
+  }
+  if (!ls(KEY_PROGRAMS)) {
+    lsSet(KEY_PROGRAMS, [
+      { id:'p1', title:'Sunday Choir Rehearsal',    type:'Rehearsal', day:'20', month:'APR', time:'2:00 PM', venue:'All Nation Church',  desc:'Full choir rehearsal — all members required' },
+      { id:'p2', title:'Instrumentalists Rehearsal', type:'Rehearsal', day:'17', month:'APR', time:'6:00 PM', venue:'All Nation Church',  desc:'Thursday rehearsal for all instrumentalists' },
+      { id:'p3', title:'Easter Sunday Ministration', type:'Service',   day:'20', month:'APR', time:'8:00 AM', venue:'All Nation Church',  desc:'Easter Sunday combined service — full choir' },
+      { id:'p4', title:'Choir Anniversary Concert',  type:'Program',   day:'15', month:'MAY', time:'5:00 PM', venue:'Main Auditorium',   desc:'Founding anniversary thanksgiving concert' },
+      { id:'p5', title:'Voice Training Workshop',    type:'Workshop',  day:'03', month:'MAY', time:'9:00 AM', venue:'Hall B',            desc:'Open voice development workshop for all members' },
+      { id:'p6', title:'Regional Choir Festival',    type:'Program',   day:'22', month:'JUN', time:'10:00 AM',venue:'Regional Center',   desc:'Inter-church choir festival — selected members represent EPF' },
+    ]);
+  }
+  if (!ls(KEY_ATTENDANCE)) {
+    const t = today(); const y = new Date(Date.now()-86400000).toISOString().split('T')[0];
+    lsSet(KEY_ATTENDANCE, [
+      { id:'att1',memberId:'u6',memberName:'Samuel Asante',   memberEmail:'samuel@epf.org',  date:y, type:'rehearsal',status:'present',reason:'',markedBy:'Abena Mensah' },
+      { id:'att2',memberId:'u7',memberName:'Emmanuel Osei',   memberEmail:'emmanuel@epf.org',date:y, type:'rehearsal',status:'absent', reason:'',markedBy:'Abena Mensah' },
+      { id:'att3',memberId:'u8',memberName:'Comfort Adusei',  memberEmail:'comfort@epf.org', date:y, type:'rehearsal',status:'present',reason:'',markedBy:'Abena Mensah' },
+      { id:'att4',memberId:'u9',memberName:'Test Member',     memberEmail:'member@epf.org',  date:y, type:'rehearsal',status:'present',reason:'',markedBy:'Abena Mensah' },
+      { id:'att5',memberId:'u6',memberName:'Samuel Asante',   memberEmail:'samuel@epf.org',  date:t, type:'service',  status:'present',reason:'',markedBy:'Abena Mensah' },
+      { id:'att6',memberId:'u7',memberName:'Emmanuel Osei',   memberEmail:'emmanuel@epf.org',date:t, type:'service',  status:'absent', reason:'Sick',markedBy:'Abena Mensah' },
+    ]);
+  }
+  if (!ls(KEY_DUES))    { lsSet(KEY_DUES, []); }
+  if (!ls(KEY_CAUTIONS)){ lsSet(KEY_CAUTIONS, []); }
 }
 
-function showJudgePanel(name) {
-    document.getElementById("judge").value = name;
-    document.getElementById("scoreForm").style.display = "block";
-    document.getElementById("loginSection").style.display = "none";
-    loadBoard();
+/* ================================================================
+   UTILITIES
+================================================================ */
+const ls    = k => { try { return JSON.parse(localStorage.getItem(k)); } catch(e) { return null; } };
+const lsSet = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+const uid   = () => 'id' + Math.random().toString(36).substr(2,9);
+const today = () => new Date().toISOString().split('T')[0];
+
+function toast(msg, success=true) {
+  const t = document.getElementById('toast');
+  t.innerHTML = `<i class="fas fa-${success?'check-circle':'exclamation-circle'}"></i> ${msg}`;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+function getInitials(name) { return (name||'?').split(' ').map(n=>n[0]).join('').toUpperCase().substr(0,2); }
+
+function showLoading(msg='Loading...') {
+  document.getElementById('loadingOverlay').style.display='flex';
+  document.getElementById('loadingMsg').textContent = msg;
+}
+function hideLoading() { document.getElementById('loadingOverlay').style.display='none'; }
+
+function disableBtn(id, label) {
+  const btn = document.getElementById(id);
+  if(btn) { btn.disabled=true; btn.style.opacity='0.6'; btn.innerHTML=label; }
+}
+function enableBtn(id, label) {
+  const btn = document.getElementById(id);
+  if(btn) { btn.disabled=false; btn.style.opacity=''; btn.innerHTML=label; }
 }
 
-(function(){
-    const userJson = sessionStorage.getItem("user");
-    if (userJson) {
-        const user = JSON.parse(userJson);
-        showJudgePanel(user.name);
+/* ================================================================
+   MEMBER STATUS LOGIC
+   Green  = Active     → attendance ≥ 75% AND dues paid ≥ 2 months in last 3
+   Yellow = Moderate   → attendance 50–74% OR 1 month dues paid
+   Red    = Inactive   → attendance < 50% OR no dues in 3 months
+================================================================ */
+function computeMemberStatus(userId) {
+  const att   = (ls(KEY_ATTENDANCE)||[]).filter(r => r.memberId === userId);
+  const dues  = (ls(KEY_DUES)||[]).filter(d => d.memberId === userId && d.status === 'confirmed');
+
+  const total   = att.length;
+  const present = att.filter(r => r.status === 'present').length;
+  const attRate = total > 0 ? (present / total) * 100 : 0;
+
+  // Check dues in last 3 months
+  const now = new Date();
+  const last3Months = [];
+  for(let i=0; i<3; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    last3Months.push(d.toLocaleString('default',{month:'long'}));
+  }
+  const recentDues = dues.filter(d => last3Months.includes(d.month)).length;
+
+  let status = 'red', label = 'Inactive', icon = '🔴';
+  if(total === 0 && recentDues === 0) {
+    status = 'yellow'; label = 'New Member'; icon = '🟡';
+  } else if(attRate >= 75 && recentDues >= 2) {
+    status = 'green'; label = 'Active'; icon = '🟢';
+  } else if(attRate >= 50 || recentDues >= 1) {
+    status = 'yellow'; label = 'Moderate'; icon = '🟡';
+  } else {
+    status = 'red'; label = 'Inactive'; icon = '🔴';
+  }
+
+  return { status, label, icon, attRate: Math.round(attRate), total, present, recentDues };
+}
+
+function renderStatusBanner(containerId, userId) {
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  const s = computeMemberStatus(userId);
+  el.innerHTML = `<div class="member-status-banner status-${s.status}">
+    <div class="status-icon">${s.icon}</div>
+    <div class="status-text">
+      <h4>Member Status: ${s.label}</h4>
+      <p>Attendance: ${s.attRate}% (${s.present}/${s.total} sessions) · Dues paid recently: ${s.recentDues}/3 months</p>
+    </div>
+  </div>`;
+}
+
+/* ================================================================
+   GOOGLE SHEETS COMMUNICATION
+================================================================ */
+let _gasPending = false;
+function sendToGoogleSheet(data, callback) {
+  // Prevent duplicate rapid calls
+  if(_gasPending) { if(callback) callback(false); return; }
+  _gasPending = true;
+
+  const formData = new FormData();
+  Object.entries(data).forEach(([k,v]) => formData.append(k, String(v)));
+
+  fetch(GAS_URL, { method:'POST', body:formData })
+    .then(res => res.json())
+    .then(result => { if(callback) callback(true, result); })
+    .catch(() => { if(callback) callback(false); })
+    .finally(() => { _gasPending = false; });
+}
+
+/* ----------------------------------------------------------------
+   LOGIN — validates against Google Sheet via GAS
+   GAS must return JSON: { success:true/false, user:{...} }
+   Falls back to localStorage for offline/demo use
+---------------------------------------------------------------- */
+let currentUser = null;
+
+function doLogin() {
+  const email = (document.getElementById('loginEmail').value || '').trim().toLowerCase();
+  const pass  = (document.getElementById('loginPass').value  || '').trim();
+  const errEl = document.getElementById('loginError');
+  const btn   = document.getElementById('loginBtn');
+
+  if(!email || !pass) {
+    errEl.querySelector ? (errEl.querySelector('#loginErrorMsg') || errEl).textContent = 'Please enter your email and password.' : null;
+    document.getElementById('loginErrorMsg').textContent = 'Please enter your email and password.';
+    errEl.classList.add('show');
+    return;
+  }
+
+  errEl.classList.remove('show');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+  showLoading('Verifying your credentials...');
+
+  // Try Google Sheet first, fall back to local
+  verifyLoginWithSheet(email, pass, function(result) {
+    hideLoading();
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login to Portal';
+
+    if(result.success) {
+      errEl.classList.remove('show');
+      // Merge/save user data locally
+      saveUserFromSheet(result.user);
+      currentUser = result.user;
+      lsSet(KEY_SESSION, JSON.stringify({ id: result.user.id || result.user.email, email: result.user.email, expiry: Date.now() + 86400000 }));
+      enterPortal(currentUser);
     } else {
-        showLoginOnly();
+      document.getElementById('loginErrorMsg').textContent = result.message || 'Invalid email or password, or account not yet approved.';
+      errEl.classList.add('show');
     }
-})();
-
-document.getElementById("loginBtn").onclick = async function(){
-    const name = document.getElementById("loginName").value.trim();
-    const password = document.getElementById("loginPass").value.trim();
-    const msg = document.getElementById("loginMsg");
-    if (!name || !password) { msg.innerText = "Enter credentials."; return; }
-    msg.innerText = "Logging in...";
-    try {
-        const res = await fetch(APP_URL, {
-            method: "POST",
-            body: new URLSearchParams({ action: "login", name, password }),
-        });
-        const user = await res.json();
-        if (user.success) {
-            sessionStorage.setItem("user", JSON.stringify(user));
-            showJudgePanel(user.name);
-        } else { msg.innerText = user.message; }
-    } catch (err) { msg.innerText = "Network error."; }
-};
-
-document.getElementById("logoutBtn").onclick = function() {
-    sessionStorage.clear();
-    showLoginOnly();
-};
-
-async function submitScore(){
-    const user = JSON.parse(sessionStorage.getItem("user"));
-    const contestant = document.getElementById("name").value.trim();
-
-    if (!contestant) { alert("Please enter Contestant Name"); return; }
-
-    // REQUIREMENT: PROMPT CONFIRMATION
-    const confirmVote = confirm(`Are you sure you want to submit the score for ${contestant}? This cannot be changed.`);
-    if(!confirmVote) return;
-
-    const data = {
-        contestant: contestant,
-        judge: user.name,
-        pitch: document.getElementById("pitch").value || 0,
-        tone: document.getElementById("tone").value || 0,
-        rhythm: document.getElementById("rhythm").value || 0,
-        mic: document.getElementById("mic").value || 0,
-        stage: document.getElementById("stage").value || 0,
-        communication: document.getElementById("comm").value || 0,
-        creativity: document.getElementById("creativity").value || 0,
-        impact: document.getElementById("impact").value || 0
-    };
-
-    const status = document.getElementById("status");
-    status.innerText = "Checking and Saving...";
-
-    try {
-        const res = await fetch(APP_URL, {
-            method: "POST",
-            body: new URLSearchParams(data)
-        });
-        const result = await res.json();
-
-        if (result.success) {
-            alert("Score successfully recorded! Total: " + result.total);
-            resetForm();
-            loadBoard();
-        } else {
-            alert("Error: " + result.error);
-            status.innerText = result.error;
-        }
-    } catch (err) { status.innerText = "Submission failed."; }
+  });
 }
 
-function resetForm(){
-    document.getElementById("name").value = "";
-    document.querySelectorAll("#scoreForm input[type='number']").forEach(i => i.value = "");
-}
+function verifyLoginWithSheet(email, pass, callback) {
+  // Build request to GAS
+  const formData = new FormData();
+  formData.append('action', 'login'); // ✅ FIXED (was 'type')
+  formData.append('email', email);
+  formData.append('password', pass);
 
-async function loadBoard(){
-    try {
-        const res = await fetch(`${APP_URL}?p=board`);
-        const data = await res.json();
-        const board = document.getElementById("board");
-        const historyTable = document.getElementById("judgeHistory");
-        const currentUser = JSON.parse(sessionStorage.getItem("user"));
+  fetch(GAS_URL, { method:'POST', body:formData })
+    .then(res => res.json())
+    .then(data => {
+      if(data.status === "success" && data.user) { // ✅ FIXED (was data.success)
 
-        board.innerHTML = "";
-        if(historyTable) historyTable.innerHTML = "";
+        // Since GAS already checks approval, we just proceed
+        callback({ success:true, user: normalizeUser(data.user) });
 
-        data.forEach((d, i) => {
-            let cls = "";
-            if(i==0) cls="first";
-            else if(i==1) cls="second";
-            else if(i==2) cls="third";
-
-            // REQUIREMENT: DISPLAY JUDGE NAMES AT THE BOTTOM OF ROW
-            const judgesString = d.judges.join(" | ");
-
-            board.innerHTML += `
-                <tr class="${cls}">
-                    <td>${i+1}</td>
-                    <td>
-                        <div style="font-weight: bold; font-size: 1.2em;">${d.name}</div>
-                        <div class="judge-row-footer">Voted by: ${judgesString}</div>
-                    </td>
-                    <td>${d.avg.toFixed(2)}</td>
-                </tr>
-            `;
-
-            // REQUIREMENT: SHOW JUDGE THEIR OWN VOTES
-            if(currentUser && d.judges.includes(currentUser.name)) {
-                historyTable.innerHTML += `<tr><td>${d.name}</td><td style="color:lightgreen;">Submitted ✔</td></tr>`;
-            }
+      } else {
+        // Use message from GAS
+        callback({ 
+          success:false, 
+          message: data.message || 'Invalid email or password, or account not yet approved.' 
         });
-    } catch(err){ console.log("Refresh failed"); }
+      }
+    })
+    .catch(() => {
+      // Network/CORS error — fallback to local users
+      fallbackLocalLogin(email, pass, callback);
+    });
 }
 
-setInterval(loadBoard, 10000); 
-loadBoard();
+function fallbackLocalLogin(email, pass, callback) {
+  const users = ls(KEY_USERS) || [];
+  const user  = users.find(u => u.email.toLowerCase() === email && u.password === pass && u.active !== false);
+  if(user) {
+    if(user.approved === false) {
+      callback({ success:false, message:'Your account is pending admin approval.' });
+    } else {
+      callback({ success:true, user });
+    }
+  } else {
+    callback({ success:false, message:'Invalid email or password. If you just registered, please wait for admin approval.' });
+  }
+}
 
-document.getElementById("submitBtn").onclick = submitScore;
-document.getElementById("resetBtn").onclick = resetForm;
+function normalizeUser(u) {
+  // Normalize keys coming from Google Sheets (may be different column names)
+  return {
+    id:       u.id       || u.ID       || uid(),
+    name:     u.name     || u.Name     || u.full_name || u['Full Name'] || 'Member',
+    email:    u.email    || u.Email    || u['Email Address'] || '',
+    phone:    u.phone    || u.Phone    || u['Phone Number']  || '',
+    voice:    (u.voice   || u.Voice    || u['Voice Type']    || 'soprano').toLowerCase(),
+    role:     (u.role    || u.Role     || 'member').toLowerCase(),
+    active:   u.active   !== false,
+    approved: u.approved !== false,
+    password: u.password || '',
+  };
+}
+
+function saveUserFromSheet(user) {
+  let users = ls(KEY_USERS) || [];
+  const idx = users.findIndex(u => u.email.toLowerCase() === user.email.toLowerCase());
+  if(idx >= 0) { users[idx] = { ...users[idx], ...user }; }
+  else { users.push(user); }
+  lsSet(KEY_USERS, users);
+}
+
+function checkSession() {
+  const raw = ls(KEY_SESSION);
+  if(!raw) return;
+  let session;
+  try { session = typeof raw === 'object' ? raw : JSON.parse(raw); } catch(e) { return; }
+  if(!session || !session.email) return;
+  if(session.expiry && Date.now() > session.expiry) { localStorage.removeItem(KEY_SESSION); return; }
+
+  const users = ls(KEY_USERS) || [];
+  const user  = users.find(u => u.email.toLowerCase() === session.email.toLowerCase());
+  if(user && user.active !== false) {
+    currentUser = user;
+    enterPortal(user);
+  }
+}
+
+function enterPortal(user) {
+  showPage('portal');
+  const role = rolePerms(user.role);
+  const status = computeMemberStatus(user.id || user.email);
+
+  document.getElementById('sidebarAvatar').textContent = getInitials(user.name);
+  document.getElementById('sidebarName').textContent   = user.name;
+  document.getElementById('sidebarRole').textContent   = role.label;
+  document.getElementById('dashGreeting').textContent  = `Welcome back, ${user.name.split(' ')[0]} 🎵`;
+
+  // Status dot
+  const statusEl = document.getElementById('sidebarStatus');
+  statusEl.textContent   = status.icon + ' ' + status.label;
+  statusEl.style.background = status.status === 'green' ? '#d4edda' : status.status === 'yellow' ? '#fff3cd' : '#fde8e8';
+  statusEl.style.color      = status.status === 'green' ? '#1e8449' : status.status === 'yellow' ? '#856404' : '#c0392b';
+
+  // Show/hide admin nav items based on role
+  const showIf = (liId, condition) => {
+    const el = document.getElementById(liId);
+    if(el) el.style.display = condition ? '' : 'none';
+  };
+  const adminSectionLabel = document.getElementById('adminNavLabel');
+  const anyAdmin = role.canMarkAtt || role.canManageMembers || role.canManageDues || role.canAnnounce || role.canIssueCaution;
+  if(adminSectionLabel) adminSectionLabel.style.display = anyAdmin ? '' : 'none';
+
+  showIf('nav-mark-li',          role.canMarkAtt);
+  showIf('nav-members-li',       role.canManageMembers);
+  showIf('nav-dues-li',          role.canManageDues);
+  showIf('nav-announcements-li', role.canAnnounce);
+  showIf('nav-allcautions-li',   role.canIssueCaution);
+
+  showPortal('dashboard');
+}
+
+function doLogout() {
+  currentUser = null;
+  localStorage.removeItem(KEY_SESSION);
+  showPublic('hero');
+  toast('You have been logged out. God bless you! 🙏');
+}
+
+/* ================================================================
+   PAGE NAVIGATION
+================================================================ */
+function showPage(page) {
+  document.getElementById('public-wrap').style.display  = 'none';
+  document.getElementById('login-page').style.display   = 'none';
+  document.getElementById('portal-wrap').style.display  = 'none';
+  document.getElementById('portal-wrap').classList.remove('active');
+  if(page === 'public')  { document.getElementById('public-wrap').style.display='block'; window.scrollTo(0,0); }
+  else if(page === 'login')  { document.getElementById('login-page').style.display='flex'; }
+  else if(page === 'portal') { document.getElementById('portal-wrap').style.display='flex'; document.getElementById('portal-wrap').classList.add('active'); }
+}
+
+function showPublic(sectionId) {
+  showPage('public');
+  document.querySelectorAll('#public-wrap .page-section').forEach(s => { s.classList.remove('active'); s.style.display='none'; });
+  document.getElementById('footer').style.display = 'block';
+  const target = document.getElementById(sectionId);
+  if(target) { target.style.display='block'; target.classList.add('active'); }
+  if(sectionId === 'hero') {
+    ['hero','voices','schedule'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) { el.style.display='block'; el.classList.add('active'); }
+    });
+  }
+  window.scrollTo({ top:0, behavior:'smooth' });
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const active = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
+  if(active) active.classList.add('active');
+}
+
+function showPortal(subpage) {
+  document.querySelectorAll('.portal-subpage').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+  const target = document.getElementById('p-' + subpage);
+  if(target) target.classList.add('active');
+  const navEl = document.getElementById('nav-' + subpage);
+  if(navEl) navEl.classList.add('active');
+
+  if(subpage === 'dashboard')    renderDashboard();
+  if(subpage === 'attendance')   renderAttendancePage();
+  if(subpage === 'records')      loadRecords();
+  if(subpage === 'profile')      loadProfile();
+  if(subpage === 'caution')      loadMyCautions();
+  if(subpage === 'allcautions')  loadAllCautions();
+  if(subpage === 'members')      renderMembersTable();
+  if(subpage === 'announcements')renderAnnouncements();
+  if(subpage === 'myperformance')renderMyPerformance();
+  if(subpage === 'mydues')       renderMyDues();
+  if(subpage === 'dues')         renderDuesManager();
+}
+
+function toggleMobile() { document.getElementById('mobileMenu').classList.toggle('open'); }
+
+/* ================================================================
+   DASHBOARD
+================================================================ */
+function renderDashboard() {
+  if(!currentUser) return;
+  const users      = (ls(KEY_USERS)||[]).filter(u=>u.active!==false);
+  const attendance = ls(KEY_ATTENDANCE) || [];
+  const todayStr   = today();
+  const todayRecs  = attendance.filter(r => r.date === todayStr);
+  const present    = todayRecs.filter(r => r.status === 'present').length;
+  const absent     = todayRecs.filter(r => r.status === 'absent').length;
+
+  // My personal stats
+  const myRecs     = attendance.filter(r => r.memberId === (currentUser.id||currentUser.email));
+  const myTotal    = myRecs.length;
+  const myPresent  = myRecs.filter(r => r.status === 'present').length;
+  const myRate     = myTotal > 0 ? Math.round(myPresent/myTotal*100) : 0;
+
+  document.getElementById('statTotal').textContent   = users.length;
+  document.getElementById('statPresent').textContent = present;
+  document.getElementById('statAbsent').textContent  = absent;
+  document.getElementById('myAttScore').textContent  = myRate + '%';
+  document.getElementById('statAttRate').textContent = (present+absent > 0) ? Math.round(present/(present+absent)*100)+'%' : 'N/A';
+
+  renderStatusBanner('memberStatusBanner', currentUser.id || currentUser.email);
+  renderRecentAttTable();
+  renderCharts();
+  updateVoiceCounts();
+}
+
+function renderRecentAttTable() {
+  if(!currentUser) return;
+  const isAdmin = hasPermission('canMarkAtt');
+  let att = (ls(KEY_ATTENDANCE)||[]);
+  if(!isAdmin) att = att.filter(r => r.memberId === (currentUser.id||currentUser.email));
+  att = att.slice(-10).reverse();
+  const tbody = document.getElementById('recentAttBody');
+  if(!tbody) return;
+  tbody.innerHTML = att.length === 0
+    ? '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">No attendance records yet.</td></tr>'
+    : att.map(r => `<tr>
+        <td>${isAdmin ? `<strong>${r.memberName}</strong><br><small style="color:var(--text-muted)">${r.date}</small>` : r.date}</td>
+        <td><span class="badge badge-gold">${r.type}</span></td>
+        <td>${r.status==='present'?'<span class="badge badge-green">Present</span>':'<span class="badge badge-red">Absent</span>'}</td>
+        <td>${r.reason||'—'}</td>
+      </tr>`).join('');
+}
+
+let attChart, voiceChart, myAttChart2;
+function renderCharts() {
+  const att    = ls(KEY_ATTENDANCE) || [];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const curMon = new Date().getMonth();
+  const labels = [], data = [];
+  for(let i=5;i>=0;i--) {
+    const m = (curMon-i+12)%12;
+    labels.push(months[m]);
+    const mRecs = att.filter(r => new Date(r.date).getMonth() === m);
+    data.push(mRecs.length > 0 ? Math.round(mRecs.filter(r=>r.status==='present').length/mRecs.length*100) : 0);
+  }
+  const ctx1 = document.getElementById('attendanceChart');
+  if(ctx1) {
+    if(attChart) attChart.destroy();
+    attChart = new Chart(ctx1,{type:'line',data:{labels,datasets:[{label:'Attendance %',data,borderColor:'#C9A84C',backgroundColor:'rgba(201,168,76,0.12)',tension:0.4,fill:true,pointBackgroundColor:'#2C1654',pointBorderColor:'#C9A84C',pointRadius:5}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,0.04)'}},x:{grid:{display:false}}}}});
+  }
+  const users = (ls(KEY_USERS)||[]).filter(u=>u.active!==false);
+  const ctx2 = document.getElementById('voiceChart');
+  if(ctx2) {
+    if(voiceChart) voiceChart.destroy();
+    voiceChart = new Chart(ctx2,{type:'doughnut',data:{labels:['Soprano','Alto','Tenor','Bass','Instrum.'],datasets:[{data:[users.filter(u=>u.voice==='soprano').length,users.filter(u=>u.voice==='alto').length,users.filter(u=>u.voice==='tenor').length,users.filter(u=>u.voice==='bass').length,users.filter(u=>u.voice==='instrumentalist').length],backgroundColor:['#C9A84C','#5a3a9a','#2C1654','#8a6d28','#1a8449'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{padding:16,font:{size:12}}}},cutout:'65%'}});
+  }
+}
+
+function updateVoiceCounts() {
+  const users = (ls(KEY_USERS)||[]).filter(u=>u.active!==false);
+  ['soprano','alto','tenor','bass'].forEach(v => {
+    const el = document.getElementById(v+'Count');
+    if(el) el.textContent = users.filter(u=>u.voice===v).length + ' members';
+  });
+}
+
+/* ================================================================
+   MY PERFORMANCE
+================================================================ */
+function renderMyPerformance() {
+  if(!currentUser) return;
+  const uid2   = currentUser.id || currentUser.email;
+  const myRecs = (ls(KEY_ATTENDANCE)||[]).filter(r => r.memberId === uid2);
+  const dues   = (ls(KEY_DUES)||[]).filter(d => d.memberId === uid2 && d.status === 'confirmed');
+  const total  = myRecs.length, present = myRecs.filter(r=>r.status==='present').length, absent = myRecs.filter(r=>r.status==='absent').length;
+  const score  = total > 0 ? Math.round(present/total*100) : 0;
+
+  document.getElementById('perfTotalSessions').textContent = total;
+  document.getElementById('perfPresentCount').textContent  = present;
+  document.getElementById('perfAbsentCount').textContent   = absent;
+  document.getElementById('perfDuesPaid').textContent      = dues.length;
+  document.getElementById('perfScoreText').textContent     = score + '%';
+
+  const arc = document.getElementById('perfArcFill');
+  arc.style.strokeDashoffset = 314 - (score/100)*314;
+  arc.style.stroke = score >= 75 ? '#1e8449' : score >= 50 ? '#d4a017' : '#c0392b';
+
+  const ratingEl = document.getElementById('perfRating');
+  if(score >= 90)      { ratingEl.style.cssText='background:#d4edda;color:#1e8449;padding:12px 16px;border-radius:8px;font-size:0.9rem;font-weight:600;'; ratingEl.innerHTML='<i class="fas fa-star"></i> Excellent — You are a pillar of EPF!'; }
+  else if(score >= 75) { ratingEl.style.cssText='background:#d4edda;color:#1e8449;padding:12px 16px;border-radius:8px;font-size:0.9rem;font-weight:600;'; ratingEl.innerHTML='<i class="fas fa-thumbs-up"></i> Good Standing — Well done!'; }
+  else if(score >= 50) { ratingEl.style.cssText='background:#fff3cd;color:#856404;padding:12px 16px;border-radius:8px;font-size:0.9rem;font-weight:600;'; ratingEl.innerHTML='<i class="fas fa-exclamation-circle"></i> Fair — Your attendance needs improvement.'; }
+  else if(total === 0) { ratingEl.style.cssText='background:#e9ecef;color:#6c757d;padding:12px 16px;border-radius:8px;font-size:0.9rem;font-weight:600;'; ratingEl.innerHTML='<i class="fas fa-info-circle"></i> No records yet. Attendance will be tracked after sessions.'; }
+  else                 { ratingEl.style.cssText='background:#fde8e8;color:#c0392b;padding:12px 16px;border-radius:8px;font-size:0.9rem;font-weight:600;'; ratingEl.innerHTML='<i class="fas fa-triangle-exclamation"></i> Poor — You are at risk of receiving a caution notice.'; }
+
+  renderStatusBanner('memberStatusBanner2', uid2);
+
+  // Monthly chart
+  const months2 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const curMon = new Date().getMonth();
+  const mlabels = [], mPresent = [], mAbsent = [];
+  for(let i=5;i>=0;i--) {
+    const m = (curMon-i+12)%12;
+    mlabels.push(months2[m]);
+    const mRecs = myRecs.filter(r => new Date(r.date).getMonth() === m);
+    mPresent.push(mRecs.filter(r=>r.status==='present').length);
+    mAbsent.push(mRecs.filter(r=>r.status==='absent').length);
+  }
+  const ctx = document.getElementById('myAttChart');
+  if(ctx) {
+    if(myAttChart2) myAttChart2.destroy();
+    myAttChart2 = new Chart(ctx,{type:'bar',data:{labels:mlabels,datasets:[{label:'Present',data:mPresent,backgroundColor:'rgba(30,132,73,0.7)',borderRadius:4},{label:'Absent',data:mAbsent,backgroundColor:'rgba(192,57,43,0.7)',borderRadius:4}]},options:{responsive:true,plugins:{legend:{position:'bottom'}},scales:{x:{grid:{display:false}},y:{beginAtZero:true,ticks:{stepSize:1},grid:{color:'rgba(0,0,0,0.04)'}}}}}); 
+  }
+}
+
+/* ================================================================
+   MY DUES
+================================================================ */
+function renderMyDues() {
+  if(!currentUser) return;
+  const uid2   = currentUser.id || currentUser.email;
+  const allDues = ls(KEY_DUES) || [];
+  const myDues  = allDues.filter(d => d.memberId === uid2);
+  const confirmed = myDues.filter(d => d.status === 'confirmed');
+  const monthly   = 20;
+  const totalPaid = confirmed.reduce((s,d)=>s+(d.amount||monthly),0);
+
+  const startMonth = new Date('2026-03-01'), now = new Date();
+  let monthsElapsed = (now.getFullYear()-startMonth.getFullYear())*12 + (now.getMonth()-startMonth.getMonth()) + 1;
+  if(monthsElapsed < 1) monthsElapsed = 1;
+  const monthsPaid = confirmed.length;
+  const monthsOwed = Math.max(0, monthsElapsed-monthsPaid);
+
+  document.getElementById('duesPaid').textContent   = monthsPaid;
+  document.getElementById('duesOwed').textContent   = monthsOwed;
+  document.getElementById('duesTotal').textContent  = 'GHS ' + totalPaid;
+  document.getElementById('duesBalance').textContent= 'GHS ' + (monthsOwed * monthly);
+
+  const container = document.getElementById('duesRecord');
+  container.innerHTML = myDues.length === 0
+    ? '<p style="color:var(--text-muted);padding:20px 0;">No dues records yet.</p>'
+    : myDues.sort((a,b)=>b.submittedOn.localeCompare(a.submittedOn)).map(d=>`
+        <div class="dues-row">
+          <span class="dues-month"><i class="fas fa-calendar-check" style="color:var(--gold);margin-right:6px;"></i>${d.month} 2026</span>
+          <span class="dues-amount">GHS ${d.amount||monthly}</span>
+          <span class="badge ${d.status==='confirmed'?'badge-green':d.status==='pending'?'badge-gold':'badge-red'}">${d.status}</span>
+          <span style="font-size:0.78rem;color:var(--text-muted);">${d.method} · ${d.submittedOn}</span>
+        </div>`).join('');
+
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('duesMonth').value = months[new Date().getMonth()];
+}
+
+function submitDuesNotification() {
+  const btn = document.getElementById('duesSubmitBtn');
+  if(btn && btn.disabled) return;
+  const month  = document.getElementById('duesMonth').value;
+  const amount = parseInt(document.getElementById('duesAmountInput').value)||20;
+  const method = document.getElementById('duesMethod').value;
+  if(!currentUser) return;
+
+  const uid2 = currentUser.id || currentUser.email;
+  let dues = ls(KEY_DUES)||[];
+  const already = dues.find(d => d.memberId===uid2 && d.month===month && d.year==='2026');
+  if(already) { toast('You already submitted dues for '+month+'.', false); return; }
+
+  dues.push({ id:uid(), memberId:uid2, memberName:currentUser.name, memberEmail:currentUser.email, month, year:'2026', amount, method, status:'pending', submittedOn:today(), confirmedBy:'' });
+  lsSet(KEY_DUES, dues);
+  disableBtn('duesSubmitBtn','<i class="fas fa-spinner fa-spin"></i> Sending...');
+  sendToGoogleSheet({ type:'dues_notification', memberName:currentUser.name, memberEmail:currentUser.email, month, amount, method }, () => {
+    enableBtn('duesSubmitBtn','<i class="fas fa-paper-plane"></i> Notify Treasurer');
+    toast('Dues notification sent! Awaiting treasurer confirmation.');
+    renderMyDues();
+  });
+}
+
+/* ================================================================
+   DUES MANAGER (Admin/Secretary)
+================================================================ */
+function renderDuesManager() {
+  if(!hasPermission('canManageDues')) { toast('Access denied.', false); return; }
+  const dues    = ls(KEY_DUES)||[];
+  const pending = dues.filter(d=>d.status==='pending');
+
+  const tbody1 = document.getElementById('pendingDuesBody');
+  tbody1.innerHTML = pending.length === 0
+    ? '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">No pending notifications.</td></tr>'
+    : pending.map(d=>`<tr>
+        <td><strong>${d.memberName}</strong></td>
+        <td>${d.month} ${d.year}</td><td>GHS ${d.amount}</td>
+        <td><span class="badge badge-gray">${d.method}</span></td>
+        <td>${d.submittedOn}</td>
+        <td><span class="badge badge-gold">Pending</span></td>
+        <td>
+          <button class="btn btn-sm" style="background:#d4edda;color:#1e8449;border-radius:6px;" onclick="confirmDues('${d.id}')">Confirm</button>
+          <button class="btn btn-sm" style="background:#fde8e8;color:var(--danger);border-radius:6px;margin-left:4px;" onclick="rejectDues('${d.id}')">Reject</button>
+        </td>
+      </tr>`).join('');
+
+  const tbody2 = document.getElementById('allDuesBody');
+  tbody2.innerHTML = dues.sort((a,b)=>b.submittedOn.localeCompare(a.submittedOn)).map(d=>`<tr>
+    <td>${d.memberName}</td><td>${d.month} ${d.year}</td><td>GHS ${d.amount}</td>
+    <td><span class="badge ${d.status==='confirmed'?'badge-green':d.status==='pending'?'badge-gold':'badge-red'}">${d.status}</span></td>
+    <td>${d.confirmedBy||'—'}</td>
+  </tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px;">No records.</td></tr>';
+}
+
+function confirmDues(id) {
+  let dues = ls(KEY_DUES)||[]; const idx = dues.findIndex(d=>d.id===id); if(idx===-1) return;
+  dues[idx].status='confirmed'; dues[idx].confirmedBy=currentUser.name;
+  lsSet(KEY_DUES,dues); toast('Dues confirmed for '+dues[idx].memberName+'!'); renderDuesManager();
+}
+function rejectDues(id) {
+  let dues = ls(KEY_DUES)||[]; const idx = dues.findIndex(d=>d.id===id); if(idx===-1) return;
+  dues[idx].status='rejected'; lsSet(KEY_DUES,dues); toast('Dues notification rejected.',false); renderDuesManager();
+}
+
+/* ================================================================
+   ATTENDANCE MARKING
+================================================================ */
+const attSelections = {};
+function renderAttendancePage() {
+  if(!hasPermission('canMarkAtt')) { toast('Access denied.', false); return; }
+  const dateInput = document.getElementById('attDate');
+  if(dateInput && !dateInput.value) dateInput.value = today();
+  const users = (ls(KEY_USERS)||[]).filter(u=>u.active!==false && u.role==='member');
+  const container = document.getElementById('memberAttList');
+  container.innerHTML = users.map(u=>`<div class="member-att-row" id="attrow-${u.id}">
+    <div class="att-member">
+      <div class="att-avatar">${getInitials(u.name)}</div>
+      <div><div style="font-weight:600;font-size:0.9rem;">${u.name}</div><div style="font-size:0.78rem;color:var(--text-muted);">${u.voice} · ${u.email}</div></div>
+    </div>
+    <div class="att-controls">
+      <button class="att-btn present" id="btn-p-${u.id}" onclick="toggleAtt('${u.id}','present')">Present</button>
+      <button class="att-btn absent"  id="btn-a-${u.id}" onclick="toggleAtt('${u.id}','absent')">Absent</button>
+    </div>
+  </div>`).join('');
+
+  const dateStr = dateInput ? dateInput.value : today();
+  const typeVal = document.getElementById('attType')?.value||'rehearsal';
+  (ls(KEY_ATTENDANCE)||[]).filter(r=>r.date===dateStr&&r.type===typeVal).forEach(r=>toggleAtt(r.memberId,r.status,false));
+}
+
+function toggleAtt(userId, status, save=true) {
+  if(save) attSelections[userId]=status;
+  const btnP = document.getElementById('btn-p-'+userId), btnA = document.getElementById('btn-a-'+userId);
+  if(!btnP||!btnA) return;
+  btnP.classList.toggle('active', status==='present');
+  btnA.classList.toggle('active', status==='absent');
+}
+
+function saveAttendance() {
+  if(!hasPermission('canMarkAtt')) { toast('Access denied.', false); return; }
+  const btn = document.getElementById('saveAttBtn'); if(btn&&btn.disabled) return;
+  const dateStr = document.getElementById('attDate').value||today();
+  const typeVal = document.getElementById('attType').value;
+  let attendance = ls(KEY_ATTENDANCE)||[];
+  const users    = (ls(KEY_USERS)||[]).filter(u=>u.active!==false&&u.role==='member');
+  let saved=0; const report=[];
+
+  users.forEach(u => {
+    const status = attSelections[u.id];
+    if(!status) return;
+    attendance = attendance.filter(r=>!(r.memberId===u.id&&r.date===dateStr&&r.type===typeVal));
+    const rec = { id:uid(), memberId:u.id, memberName:u.name, memberEmail:u.email, date:dateStr, type:typeVal, status, reason:'', markedBy:currentUser?.name||'Admin' };
+    attendance.push(rec); report.push({ name:u.name, email:u.email, voice:u.voice, status }); saved++;
+  });
+  lsSet(KEY_ATTENDANCE, attendance);
+  checkAutoCaution();
+
+  disableBtn('saveAttBtn','<i class="fas fa-spinner fa-spin"></i> Saving...');
+  sendToGoogleSheet({ type:'attendance_report', date:dateStr, session:typeVal, markedBy:currentUser?.name||'Admin', totalSaved:saved, records:JSON.stringify(report) }, () => {
+    enableBtn('saveAttBtn','<i class="fas fa-save"></i> Save All');
+    toast(`Attendance saved for ${saved} member(s)`);
+    Object.keys(attSelections).forEach(k=>delete attSelections[k]);
+  });
+}
+
+function checkAutoCaution() {
+  const users = (ls(KEY_USERS)||[]).filter(u=>u.active!==false&&u.role==='member');
+  const att   = ls(KEY_ATTENDANCE)||[];
+  let cautions = ls(KEY_CAUTIONS)||[];
+  users.forEach(u => {
+    const recs = att.filter(r=>r.memberId===u.id).sort((a,b)=>b.date.localeCompare(a.date));
+    let consecutive=0;
+    for(const r of recs) { if(r.status==='absent'&&!r.reason) consecutive++; else break; }
+    if(consecutive >= 4) {
+      const already = cautions.some(c=>c.memberId===u.id&&c.type==='auto'&&c.date===today());
+      if(!already) {
+        cautions.push({ id:uid(), memberId:u.id, memberName:u.name, memberEmail:u.email, type:'auto', level:'caution', reason:`Auto-generated: ${consecutive} consecutive unexcused absences.`, date:today(), issuedBy:'System' });
+        lsSet(KEY_CAUTIONS, cautions);
+      }
+    }
+  });
+}
+
+/* ================================================================
+   RECORDS PAGE
+================================================================ */
+function loadRecords() {
+  if(!currentUser) return;
+  const filterStatus = document.getElementById('recordFilterStatus')?.value||'';
+  let records = (ls(KEY_ATTENDANCE)||[]).filter(r => r.memberId === (currentUser.id||currentUser.email));
+  if(filterStatus) records = records.filter(r=>r.status===filterStatus);
+  records = records.sort((a,b)=>b.date.localeCompare(a.date));
+  const tbody = document.getElementById('recordsBody');
+  tbody.innerHTML = records.length === 0
+    ? '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:32px;">No records found.</td></tr>'
+    : records.map(r=>`<tr>
+        <td>${r.date}</td>
+        <td><span class="badge badge-gold">${r.type}</span></td>
+        <td>${r.status==='present'?'<span class="badge badge-green">Present</span>':'<span class="badge badge-red">Absent</span>'}</td>
+        <td>${r.reason||'—'}</td>
+      </tr>`).join('');
+}
+
+function submitExcuse() {
+  const btn = document.getElementById('excuseSubmitBtn'); if(btn&&btn.disabled) return;
+  const date   = document.getElementById('excuseDate').value;
+  const reason = document.getElementById('excuseReason').value.trim();
+  if(!date||!reason) { toast('Please fill both fields.', false); return; }
+  let att = ls(KEY_ATTENDANCE)||[];
+  const uid2 = currentUser.id||currentUser.email;
+  const idx  = att.findIndex(r=>r.memberId===uid2&&r.date===date&&r.status==='absent');
+  if(idx===-1) { toast('No absence record found for that date.', false); return; }
+  att[idx].reason = reason;
+  lsSet(KEY_ATTENDANCE, att);
+  disableBtn('excuseSubmitBtn','<i class="fas fa-spinner fa-spin"></i> Sending...');
+  sendToGoogleSheet({ type:'excuse_submission', memberName:currentUser.name, memberEmail:currentUser.email, date, reason }, () => {
+    enableBtn('excuseSubmitBtn','<i class="fas fa-paper-plane"></i> Submit Excuse');
+    toast('Excuse submitted successfully!');
+    loadRecords();
+  });
+}
+
+/* ================================================================
+   PROFILE
+================================================================ */
+function loadProfile() {
+  if(!currentUser) return;
+  document.getElementById('profileAvatar').textContent = getInitials(currentUser.name);
+  document.getElementById('profileName').textContent   = currentUser.name;
+  document.getElementById('profileRole').textContent   = rolePerms(currentUser.role).label;
+  const s = computeMemberStatus(currentUser.id||currentUser.email);
+  document.getElementById('profileMemberStatus').textContent = s.icon + ' ' + s.label + ' Member';
+  const parts = currentUser.name.split(' ');
+  document.getElementById('pFirstName').value = parts[0]||'';
+  document.getElementById('pLastName').value  = parts.slice(1).join(' ')||'';
+  document.getElementById('pEmail').value     = currentUser.email;
+  document.getElementById('pPhone').value     = currentUser.phone||'';
+  document.getElementById('pVoice').value     = currentUser.voice||'soprano';
+}
+
+function saveProfile() {
+  const fn = document.getElementById('pFirstName').value.trim();
+  const ln = document.getElementById('pLastName').value.trim();
+  const phone   = document.getElementById('pPhone').value.trim();
+  const voice   = document.getElementById('pVoice').value;
+  const newPass = document.getElementById('pNewPass').value;
+  if(!fn) { toast('First name is required.', false); return; }
+  if(newPass && newPass.length < 12) { toast('Password must be at least 12 characters.', false); return; }
+
+  let users = ls(KEY_USERS)||[];
+  const uid2 = currentUser.id||currentUser.email;
+  const idx  = users.findIndex(u => (u.id===uid2)||(u.email.toLowerCase()===currentUser.email.toLowerCase()));
+  if(idx===-1) return;
+  users[idx].name  = `${fn} ${ln}`.trim();
+  users[idx].phone = phone;
+  users[idx].voice = voice;
+  if(newPass) users[idx].password = newPass;
+  lsSet(KEY_USERS, users);
+  currentUser = users[idx];
+  lsSet(KEY_SESSION, JSON.stringify({ id:currentUser.id||currentUser.email, email:currentUser.email, expiry:Date.now()+86400000 }));
+  loadProfile();
+  document.getElementById('sidebarName').textContent = currentUser.name;
+  toast('Profile updated successfully!');
+  // Also push to Sheet
+  sendToGoogleSheet({ type:'profile_update', email:currentUser.email, name:currentUser.name, phone, voice });
+}
+
+/* ================================================================
+   CAUTION NOTICES
+================================================================ */
+function loadMyCautions() {
+  if(!currentUser) return;
+  const uid2 = currentUser.id||currentUser.email;
+  const cautions = (ls(KEY_CAUTIONS)||[]).filter(c=>c.memberId===uid2);
+  renderCautionList('cautionList', cautions, false);
+}
+
+function loadAllCautions() {
+  if(!hasPermission('canIssueCaution')) { toast('Access denied.', false); return; }
+  const cautions = ls(KEY_CAUTIONS)||[];
+  renderCautionList('allCautionsList', cautions, true);
+  // Populate member select
+  const sel = document.getElementById('cautionMember');
+  if(sel) {
+    sel.innerHTML = (ls(KEY_USERS)||[]).filter(u=>u.active!==false&&u.role==='member')
+      .map(u=>`<option value="${u.id}" data-name="${u.name}" data-email="${u.email}">${u.name}</option>`).join('');
+  }
+}
+
+function renderCautionList(containerId, cautions, showDelete) {
+  const el = document.getElementById(containerId); if(!el) return;
+  if(cautions.length===0) {
+    el.innerHTML=`<div style="text-align:center;padding:48px;color:var(--text-muted);"><i class="fas fa-check-circle" style="font-size:2.5rem;color:var(--success);margin-bottom:12px;display:block;"></i>No notices found. ${!showDelete?'Great job maintaining attendance!':''}</div>`;
+    return;
+  }
+  el.innerHTML = cautions.sort((a,b)=>b.date.localeCompare(a.date)).map(c=>`
+    <div class="notice-card ${c.level==='caution'||c.level==='auto'?'caution':''}">
+      <h4><i class="fas fa-exclamation-triangle"></i> ${c.level==='caution'||c.level==='auto'?'Caution Notice':'Serious Warning'} — ${c.memberName}</h4>
+      <p>${c.reason}</p>
+      <div class="notice-meta">Issued: ${c.date} &nbsp;·&nbsp; By: ${c.issuedBy}</div>
+      ${showDelete ? `<button class="btn btn-sm" style="margin-top:12px;background:#fde8e8;color:var(--danger);border-radius:6px;" onclick="removeCaution('${c.id}')">Remove</button>` : ''}
+    </div>`).join('');
+}
+
+function showIssueCautionForm() { document.getElementById('issueCautionForm').style.display='block'; }
+
+function issueCaution() {
+  if(!hasPermission('canIssueCaution')) { toast('Access denied.', false); return; }
+  const sel = document.getElementById('cautionMember');
+  const opt = sel.options[sel.selectedIndex];
+  const memberId = sel.value, memberName = opt.dataset.name, memberEmail = opt.dataset.email;
+  const level    = document.getElementById('cautionType').value;
+  const reason   = document.getElementById('cautionReason').value.trim();
+  if(!reason) { toast('Please provide a reason.', false); return; }
+  let cautions = ls(KEY_CAUTIONS)||[];
+  cautions.push({ id:uid(), memberId, memberName, memberEmail, type:'manual', level, reason, date:today(), issuedBy:currentUser.name });
+  lsSet(KEY_CAUTIONS, cautions);
+  document.getElementById('issueCautionForm').style.display='none';
+  document.getElementById('cautionReason').value='';
+  sendToGoogleSheet({ type:'caution_notice', memberName, memberEmail, level, reason, issuedBy:currentUser.name, date:today() });
+  toast('Notice issued successfully!');
+  loadAllCautions();
+}
+
+function removeCaution(id) {
+  lsSet(KEY_CAUTIONS, (ls(KEY_CAUTIONS)||[]).filter(c=>c.id!==id));
+  toast('Notice removed.'); loadAllCautions();
+}
+
+/* ================================================================
+   MEMBERS MANAGEMENT (Admin/Developer/President)
+================================================================ */
+function showAddMemberForm() { document.getElementById('addMemberForm').style.display='block'; }
+
+function addMember() {
+  if(!hasPermission('canManageMembers')) { toast('Access denied.', false); return; }
+  const name  = document.getElementById('newMemberName').value.trim();
+  const email = document.getElementById('newMemberEmail').value.trim().toLowerCase();
+  const voice = document.getElementById('newMemberVoice').value;
+  const role  = document.getElementById('newMemberRole').value;
+  const pass  = document.getElementById('newMemberPass').value.trim()||'epf2026member!';
+  if(!name||!email) { toast('Name and email are required.', false); return; }
+  let users = ls(KEY_USERS)||[];
+  if(users.find(u=>u.email===email)) { toast('A member with this email already exists.', false); return; }
+  const newUser = { id:uid(), name, email, password:pass, role, voice, phone:'', active:true, approved:true };
+  users.push(newUser);
+  lsSet(KEY_USERS, users);
+  document.getElementById('addMemberForm').style.display='none';
+  document.getElementById('newMemberName').value='';
+  document.getElementById('newMemberEmail').value='';
+  document.getElementById('newMemberPass').value='';
+  toast(`Member "${name}" added!`);
+  renderMembersTable();
+}
+
+function renderMembersTable() {
+  if(!hasPermission('canManageMembers')) { document.getElementById('membersBody').innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text-muted);">Access denied.</td></tr>'; return; }
+  const query = (document.getElementById('memberSearch')?.value||'').toLowerCase();
+  const users = (ls(KEY_USERS)||[]).filter(u=>u.name.toLowerCase().includes(query)||u.email.toLowerCase().includes(query));
+  const s = (u) => computeMemberStatus(u.id||u.email);
+
+  document.getElementById('membersBody').innerHTML = users.map(u=>{
+    const ms = s(u);
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:0.75rem;font-weight:700;">${getInitials(u.name)}</div><strong>${u.name}</strong></div></td>
+      <td style="color:var(--text-muted);">${u.email}</td>
+      <td><span class="badge badge-gold">${u.voice}</span></td>
+      <td><span class="badge badge-blue">${rolePerms(u.role).label}</span></td>
+      <td><span class="badge ${u.active!==false?'badge-green':'badge-red'}">${u.active!==false?'Active':'Inactive'}</span></td>
+      <td>${ms.icon} <span class="badge ${ms.status==='green'?'badge-green':ms.status==='yellow'?'badge-yellow':'badge-red'}">${ms.label}</span></td>
+      <td style="display:flex;gap:4px;flex-wrap:wrap;">
+        <button class="btn btn-sm" style="background:#e8d5f7;color:var(--purple);border-radius:6px;" onclick="toggleMemberActive('${u.id}',${u.active!==false})">${u.active!==false?'Deactivate':'Activate'}</button>
+        <button class="btn btn-sm" style="background:#fde8e8;color:var(--danger);border-radius:6px;" onclick="deleteMember('${u.id}')">Remove</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleMemberActive(id, currentlyActive) {
+  if(!hasPermission('canManageMembers')) return;
+  let users = ls(KEY_USERS)||[]; const idx = users.findIndex(u=>u.id===id); if(idx===-1) return;
+  users[idx].active = !currentlyActive; lsSet(KEY_USERS, users);
+  renderMembersTable(); toast(`Member ${users[idx].active?'activated':'deactivated'}.`);
+}
+function deleteMember(id) {
+  if(!hasPermission('canManageMembers')) return;
+  if(!confirm('Remove this member from the choir roster?')) return;
+  lsSet(KEY_USERS, (ls(KEY_USERS)||[]).filter(u=>u.id!==id));
+  renderMembersTable(); toast('Member removed.');
+}
+
+/* ================================================================
+   ANNOUNCEMENTS
+================================================================ */
+function showAnnounceForm() { document.getElementById('announceForm').style.display='block'; document.getElementById('annDate').value=today(); }
+function saveAnnouncement() {
+  if(!hasPermission('canAnnounce')) { toast('Access denied.', false); return; }
+  const title   = document.getElementById('annTitle').value.trim();
+  const date    = document.getElementById('annDate').value;
+  const message = document.getElementById('annMessage').value.trim();
+  if(!title||!message) { toast('Title and message are required.', false); return; }
+  let anns = ls(KEY_ANNOUNCEMENTS)||[];
+  anns.unshift({ id:uid(), title, date, message, by:currentUser.email });
+  lsSet(KEY_ANNOUNCEMENTS, anns);
+  document.getElementById('announceForm').style.display='none';
+  document.getElementById('annTitle').value='';
+  document.getElementById('annMessage').value='';
+  toast('Announcement published!'); renderAnnouncements(); populateHeroAnnouncements();
+}
+function renderAnnouncements() {
+  const anns = ls(KEY_ANNOUNCEMENTS)||[];
+  document.getElementById('announceList').innerHTML = anns.map(a=>`
+    <div style="background:var(--white);border-radius:var(--radius);padding:24px;box-shadow:0 2px 12px rgba(44,22,84,0.07);margin-bottom:16px;border-left:4px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <h4 style="color:var(--purple);font-size:1.1rem;">${a.title}</h4>
+        <span class="badge badge-gold">${a.date}</span>
+      </div>
+      <p style="color:var(--text-mid);font-size:0.9rem;margin-bottom:10px;">${a.message}</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <small style="color:var(--text-muted);">Posted by ${a.by}</small>
+        ${hasPermission('canAnnounce')?`<button class="btn btn-sm" style="background:#fde8e8;color:var(--danger);border-radius:6px;" onclick="deleteAnnouncement('${a.id}')">Delete</button>`:''}
+      </div>
+    </div>`).join('')||'<p style="color:var(--text-muted);text-align:center;padding:32px;">No announcements yet.</p>';
+}
+function deleteAnnouncement(id) {
+  lsSet(KEY_ANNOUNCEMENTS, (ls(KEY_ANNOUNCEMENTS)||[]).filter(a=>a.id!==id));
+  toast('Announcement deleted.'); renderAnnouncements(); populateHeroAnnouncements();
+}
+
+/* ================================================================
+   PUBLIC SITE DATA
+================================================================ */
+function populateHeroAnnouncements() {
+  const anns = (ls(KEY_ANNOUNCEMENTS)||[]).slice(0,3);
+  document.getElementById('heroAnnouncements').innerHTML = anns.map(a=>`
+    <div class="announce-card">
+      <div class="date"><i class="fas fa-calendar"></i> ${a.date}</div>
+      <p>${a.title} — ${a.message.substring(0,80)}${a.message.length>80?'...':''}</p>
+    </div>`).join('');
+}
+
+function populatePrograms() {
+  const programs = ls(KEY_PROGRAMS)||[];
+  document.getElementById('programsGrid').innerHTML = programs.map(p=>`
+    <div class="program-card">
+      <div class="program-header">
+        <div class="program-date"><span class="day">${p.day}</span><span class="mon">${p.month}</span></div>
+        <h3 class="program-title">${p.title}</h3>
+        <p class="program-type">${p.type}</p>
+      </div>
+      <div class="program-body">
+        <div class="program-meta">
+          <span><i class="fas fa-clock"></i> ${p.time}</span>
+          <span><i class="fas fa-map-marker-alt"></i> ${p.venue}</span>
+          <span><i class="fas fa-info-circle"></i> ${p.desc}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* ================================================================
+   JOIN FORM — DO NOT MODIFY — REGISTRATION ALREADY WORKS
+================================================================ */
+function submitJoin(event) {
+  if(event) event.preventDefault();
+  const btn = document.getElementById('joinSubmitBtn'); if(btn&&btn.disabled) return;
+
+  const name       = document.getElementById('joinName').value.trim();
+  const email      = document.getElementById('joinEmail').value.trim();
+  const phone      = document.getElementById('joinPhone').value.trim();
+  const password   = document.getElementById('reg-password').value;
+  const confirm    = document.getElementById('confirm_password').value;
+  const voice      = document.getElementById('joinVoice').value;
+  const background = document.getElementById('joinBackground').value;
+  const reason     = document.getElementById('joinReason').value.trim();
+
+  if(!name||!email) { toast('Please provide your name and email.', false); return; }
+  if(password !== confirm) { toast('Passwords do not match.', false); return; }
+
+  disableBtn('joinSubmitBtn','<i class="fas fa-spinner fa-spin"></i> Submitting...');
+
+  sendToGoogleSheet(
+    { type:'join_application', name, email, phone, password, voice, background, reason },
+    function() {
+      enableBtn('joinSubmitBtn','<i class="fas fa-paper-plane"></i> Submit Application');
+      toast('Application submitted! We will be in touch soon. God bless you! 🙏');
+      document.getElementById('joinName').value='';
+      document.getElementById('joinEmail').value='';
+      document.getElementById('joinPhone').value='';
+      document.getElementById('reg-password').value='';
+      document.getElementById('confirm_password').value='';
+      document.getElementById('joinReason').value='';
+      document.getElementById('joinVoice').value='';
+      document.getElementById('joinBackground').value='none';
+    }
+  );
+}
+
+/* ================================================================
+   CONTACT FORM
+================================================================ */
+function submitContact(event) {
+  if(event) event.preventDefault();
+  const btn = document.getElementById('contactSubmitBtn'); if(btn&&btn.disabled) return;
+  const name    = document.getElementById('cName').value.trim();
+  const email   = document.getElementById('cEmail').value.trim();
+  const subject = document.getElementById('cSubject').value.trim();
+  const message = document.getElementById('cMessage').value.trim();
+  if(!name||!email||!message) { toast('Please fill all required fields.', false); return; }
+  disableBtn('contactSubmitBtn','<i class="fas fa-spinner fa-spin"></i> Sending...');
+  sendToGoogleSheet({ type:'contact_message', name, email, subject, message }, function() {
+    enableBtn('contactSubmitBtn','<i class="fas fa-paper-plane"></i> Send Message');
+    toast('Message sent! We will get back to you shortly.');
+    document.getElementById('cName').value=''; document.getElementById('cEmail').value='';
+    document.getElementById('cSubject').value=''; document.getElementById('cMessage').value='';
+  });
+}
+
+/* ================================================================
+   INITIALISATION
+================================================================ */
+document.addEventListener('DOMContentLoaded', function() {
+  seedData();
+  populateHeroAnnouncements();
+  populatePrograms();
+
+  // Show hero sections
+  document.querySelectorAll('#public-wrap .page-section').forEach(s => { s.style.display='none'; s.classList.remove('active'); });
+  ['hero','voices','schedule'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) { el.style.display='block'; el.classList.add('active'); }
+  });
+  document.getElementById('footer').style.display='block';
+  document.getElementById('footer').classList.add('active');
+
+  updateVoiceCounts();
+  checkSession(); // Restore session if previously logged in
+
+  window.addEventListener('scroll', function() {
+    document.getElementById('navbar').style.background = window.scrollY>50?'rgba(44,22,84,0.99)':'rgba(44,22,84,0.96)';
+  });
+});
 </script>
-
 </body>
 </html>
