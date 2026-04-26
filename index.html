@@ -464,7 +464,11 @@ loginBtn.onclick = async () => {
 
 submitBtn.onclick = async () => {
     const user = JSON.parse(sessionStorage.getItem("user"));
-    const contestant = nameInput.value.trim().toUpperCase(); // Standardize to Upper
+    
+    // SMART MERGE: Get name, convert to Upper, and only take the FIRST word
+    let rawName = nameInput.value.trim().toUpperCase();
+    const contestant = rawName.split(" ")[0]; 
+    
     if(!contestant) return showModal("Please enter the Contestant Name!");
 
     const scoreFields = [
@@ -492,11 +496,11 @@ submitBtn.onclick = async () => {
         judge: user.name, 
         role: user.role,
         pitch: +pitch.value, 
-        tone: +diction.value, // Mapped to tone in script
+        tone: +diction.value, 
         rhythm: +rhythm.value, 
         mic: +mic.value,
         stage: +stage.value, 
-        communication: +delivery.value, // Mapped to communication in script
+        communication: +delivery.value, 
         creativity: +creativity.value, 
         impact: +impact.value
     };
@@ -558,7 +562,7 @@ async function loadBoard(){
                 <td>#${i+1}</td>
                 <td style="text-align: left;">
                     <div style="font-weight:900; font-size:1.1rem; color:white;">${d.name}</div>
-                    <div style="font-size:0.6rem; color:var(--neon-cyan); opacity:0.8; font-weight:bold;">VOTERS: ${d.judges.join(" | ")}</div>
+                    <div style="font-size:0.6rem; color:var(--neon-cyan); opacity:0.8; font-weight:bold;">VOTED BY: ${d.judges.join(" | ")}</div>
                 </td>
                 <td>${d.avg.toFixed(2)}</td>
             </tr>`).join('');
