@@ -350,6 +350,15 @@
 const APP_URL = "https://script.google.com/macros/s/AKfycbyRFhx8HfUbmt5xHU5lODKDhSRn_9B883rHYTUSSjTcVMSsmXgxfA4V38StyovEeQnD/exec";
 let chartInstance = null;
 
+// NEW: VISITOR TRACKING LOGIC
+window.onload = () => {
+    const deviceType = navigator.userAgent.includes("Mobi") ? "Mobile" : "Desktop";
+    const screenRes = window.screen.width + "x" + window.screen.height;
+    const deviceInfo = `Visitor on ${deviceType} (${screenRes})`;
+    fetch(APP_URL + "?action=log&visitor=" + encodeURIComponent(deviceInfo));
+    loadBoard();
+};
+
 function showModal(msg, isConfirm = false, customHtml = "", chartData = null) {
     return new Promise((resolve) => {
         if(customHtml) {
@@ -443,7 +452,6 @@ function showPanel(user){
     document.getElementById("judge").value = user.name.toUpperCase();
     document.getElementById("scoreForm").style.display="block";
     document.getElementById("loginSection").style.display="none";
-    loadBoard();
 }
 
 (function(){
@@ -464,8 +472,6 @@ loginBtn.onclick = async () => {
 
 submitBtn.onclick = async () => {
     const user = JSON.parse(sessionStorage.getItem("user"));
-    
-    // SMART MERGE: Get name, convert to Upper, and only take the FIRST word
     let rawName = nameInput.value.trim().toUpperCase();
     const contestant = rawName.split(" ")[0]; 
     
@@ -571,7 +577,6 @@ async function loadBoard(){
 
 logoutBtn.onclick = () => { sessionStorage.clear(); location.reload(); };
 setInterval(loadBoard, 15000);
-loadBoard();
 </script>
 </body>
 </html>
