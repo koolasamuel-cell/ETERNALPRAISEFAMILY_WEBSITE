@@ -497,22 +497,19 @@ submitBtn.onclick = async () => {
     if(!go) return;
 
     status.innerText = "TRANSMITTING...";
-    
-    const params = new URLSearchParams();
-    params.append("action", "vote");
-    params.append("contestant", contestant);
-    params.append("judge", user.name);
-    params.append("role", user.role);
-    params.append("pitch", pitch.value || 0);
-    params.append("tone", diction.value || 0);
-    params.append("rhythm", rhythm.value || 0);
-    params.append("mic", mic.value || 0);
-    params.append("stage", stage.value || 0);
-    params.append("communication", delivery.value || 0);
-    params.append("creativity", creativity.value || 0);
-    params.append("impact", impact.value || 0);
-
-    const res = await fetch(APP_URL, { method: "POST", body: params });
+    const data = {
+        contestant, 
+        judge: user.name, 
+        role: user.role,
+        pitch: +pitch.value, 
+        tone: +diction.value, 
+        rhythm: +rhythm.value, 
+        mic: +mic.value,
+        stage: +stage.value, 
+        communication: +delivery.value, 
+        creativity: +creativity.value, 
+        impact: +impact.value
+    };
 
     const res = await fetch(APP_URL, { method:"POST", body: new URLSearchParams(data) });
     const result = await res.json();
