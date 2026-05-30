@@ -884,16 +884,24 @@ const APP_URL = "https://script.google.com/macros/s/AKfycbyRFhx8HfUbmt5xHU5lODKD
 let chartInstance = null;
 
 /* ── INIT ─────────────────────────────────────────────── */
+/* ── INIT ─────────────────────────────────────────────── */
 window.addEventListener("load", () => {
   const deviceType = /Mobi/.test(navigator.userAgent) ? "Mobile" : "Desktop";
   const res        = `${screen.width}x${screen.height}`;
-  fetch(`${APP_URL}?action=log&visitor=${encodeURIComponent(`Visitor on ${deviceType} (${res})`)}`);
+  
+  // FIXED: Changed from GET parameters to a true POST request body
+  fetch(APP_URL, {
+    method: "POST",
+    body: new URLSearchParams({
+      action: "log",
+      visitor: `Visitor on ${deviceType} (${res})`
+    })
+  }).catch(err => console.log("Silent log failure initialization skipped"));
 
   const saved = sessionStorage.getItem("epf_user");
   if (saved) showPanel(JSON.parse(saved));
   loadBoard();
 });
-
 /* ── CLAMP INPUTS ─────────────────────────────────────── */
 async function clamp(input, max) {
   const val = parseFloat(input.value);
