@@ -16,7 +16,7 @@
         --glass-border: rgba(255, 255, 255, 0.2);
         --bg-gradient: radial-gradient(circle at center, #3a7bd5 0%, #001f3f 100%);
     }
-    
+
     body {
         font-family: 'Segoe UI', Roboto, Helvetica, sans-serif;
         background: var(--bg-gradient);
@@ -28,7 +28,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        background-image: 
+        background-image:
             linear-gradient(rgba(0, 31, 63, 0.8), rgba(0, 31, 63, 0.8)),
             url('https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&q=80&w=1000');
         background-size: cover;
@@ -202,7 +202,7 @@
         max-height: 90vh;
         overflow-y: auto;
     }
-    
+
     .report-flex-container {
         display: flex;
         flex-wrap: wrap;
@@ -212,7 +212,13 @@
     }
 
     .report-stats { flex: 1; min-width: 280px; }
-    .report-chart { flex: 1; min-width: 280px; background: rgba(0,0,0,0.4); border-radius: 15px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); }
+    .report-chart {
+        flex: 1; min-width: 280px;
+        background: rgba(0,0,0,0.4);
+        border-radius: 15px;
+        padding: 15px;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
 
     .modal-box p { font-weight: 800; font-size: 1.1rem; margin-bottom: 20px; color: white; }
     .modal-btn {
@@ -241,18 +247,18 @@
         border: 1px solid rgba(0,255,255,0.1);
     }
     .report-label { color: var(--neon-cyan); font-size: 0.65rem; font-weight: 900; text-transform: uppercase; display: block; }
-    .report-val { color: white; font-size: 1.1rem; font-weight: 900; }
+    .report-val   { color: white; font-size: 1.1rem; font-weight: 900; }
 
     table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-    td { 
-        background: rgba(255, 255, 255, 0.05); 
-        padding: 15px; 
-        text-align: center; 
+    td {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 15px;
+        text-align: center;
     }
     td:first-child { border-radius: 15px 0 0 15px; color: var(--neon-cyan); font-weight: 900; }
-    td:last-child { border-radius: 0 15px 15px 0; font-size: 1.2rem; font-weight: 900; color: var(--sky-blue); }
-    
-    .first td { 
+    td:last-child  { border-radius: 0 15px 15px 0; font-size: 1.2rem; font-weight: 900; color: var(--sky-blue); }
+
+    .first td {
         background: rgba(0, 255, 255, 0.1);
         border-top: 1px solid var(--neon-cyan);
         border-bottom: 1px solid var(--neon-cyan);
@@ -263,8 +269,7 @@
 
     footer {
         position: fixed;
-        bottom: 0;
-        left: 0;
+        bottom: 0; left: 0;
         width: 100%;
         padding: 15px 0;
         background: rgba(0, 31, 63, 0.8);
@@ -274,12 +279,13 @@
         z-index: 100;
     }
 
-    .copy-text { font-weight: 800; letter-spacing: 2px; color: var(--bright-text); font-size: 0.9rem; text-transform: uppercase; }
+    .copy-text     { font-weight: 800; letter-spacing: 2px; color: var(--bright-text); font-size: 0.9rem; text-transform: uppercase; }
     .designer-text { font-size: 0.7rem; color: var(--neon-cyan); opacity: 0.7; letter-spacing: 1px; }
 </style>
 </head>
 <body>
 
+<!-- ── Modal ─────────────────────────────────────────────────────────── -->
 <div id="modalOverlay">
     <div class="modal-box">
         <div id="modalContent">
@@ -290,12 +296,16 @@
     </div>
 </div>
 
+<!-- ── Header ────────────────────────────────────────────────────────── -->
 <div class="header-container">
     <h2>Eternal Praise Family</h2>
     <h1>Express Yourself</h1>
 </div>
 
-<div id="app" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+<!-- ── App shell ─────────────────────────────────────────────────────── -->
+<div id="app" style="width:100%; display:flex; flex-direction:column; align-items:center;">
+
+    <!-- Login -->
     <div id="loginSection" class="container">
         <h3>SYSTEM ACCESS</h3>
         <label>Identify Yourself</label>
@@ -303,36 +313,76 @@
         <label>Passcode</label>
         <input type="password" id="loginPass" placeholder="••••">
         <button id="loginBtn" class="submit">Authorize</button>
-        <div id="loginMsg" style="color: #ff6b6b; text-align: center; margin-top: 15px; font-weight: bold;"></div>
+        <div id="loginMsg" style="color:#ff6b6b; text-align:center; margin-top:15px; font-weight:bold;"></div>
     </div>
 
+    <!-- Score form -->
     <div id="scoreForm" class="container" style="display:none;">
         <button class="logout" id="logoutBtn">EXIT</button>
         <h3>JUDGE PANEL</h3>
+
         <label>Active Judge</label>
-        <input id="judge" readonly style="background: transparent; border: none; color: var(--neon-cyan); font-weight: 900; font-size: 1.5rem; padding-left: 0;">
-        <label>Contestant Name</label>
-        <input id="nameInput" placeholder="Type name here..." oninput="this.value = this.value.toUpperCase().replace(/[^A-Z\s]/g, '')">
+        <input id="judge" readonly
+               style="background:transparent; border:none; color:var(--neon-cyan);
+                      font-weight:900; font-size:1.5rem; padding-left:0;">
+
+        <label>Contestant Full Name</label>
+        <!-- FIX: full name, trimmed + uppercased — no split() truncation -->
+        <input id="nameInput"
+               placeholder="Type full name here..."
+               oninput="this.value = this.value.toUpperCase().replace(/[^A-Z\s]/g, '')">
+
         <div class="grid">
-            <div class="box"><label>Pitch (20)<span>Voice Control & Range</span></label><input type="number" id="pitch" placeholder="1-20" oninput="v(this, 20)"></div>
-            <div class="box"><label>Diction (15)<span>Lyrics & Clarity</span></label><input type="number" id="diction" placeholder="1-15" oninput="v(this, 15)"></div>
-            <div class="box"><label>Rhythm (15)<span>Timing & Pace</span></label><input type="number" id="rhythm" placeholder="1-15" oninput="v(this, 15)"></div>
-            <div class="box"><label>Mic (10)<span>Technique & Handling</span></label><input type="number" id="mic" placeholder="1-10" oninput="v(this, 10)"></div>
-            <div class="box"><label>Stage (15)<span>Confidence & Movement</span></label><input type="number" id="stage" placeholder="1-15" oninput="v(this, 15)"></div>
-            <div class="box"><label>Delivery (10)<span>Expression & Flow</span></label><input type="number" id="delivery" placeholder="1-10" oninput="v(this, 10)"></div>
-            <div class="box"><label>Creative (10)<span>Style & Uniqueness</span></label><input type="number" id="creativity" placeholder="1-10" oninput="v(this, 10)"></div>
-            <div class="box"><label>Impact (5)<span>Overall Impression</span></label><input type="number" id="impact" placeholder="1-5" oninput="v(this, 5)"></div>
+            <!-- Criteria order matches payload keys sent to backend -->
+            <div class="box">
+                <label>Pitch (20)<span>Voice Control &amp; Range</span></label>
+                <input type="number" id="pitch" placeholder="1-20" oninput="v(this,20)">
+            </div>
+            <!-- UI label: Diction | payload key: tone -->
+            <div class="box">
+                <label>Diction (15)<span>Lyrics &amp; Clarity</span></label>
+                <input type="number" id="diction" placeholder="1-15" oninput="v(this,15)">
+            </div>
+            <div class="box">
+                <label>Rhythm (15)<span>Timing &amp; Pace</span></label>
+                <input type="number" id="rhythm" placeholder="1-15" oninput="v(this,15)">
+            </div>
+            <div class="box">
+                <label>Mic (10)<span>Technique &amp; Handling</span></label>
+                <input type="number" id="mic" placeholder="1-10" oninput="v(this,10)">
+            </div>
+            <div class="box">
+                <label>Stage (15)<span>Confidence &amp; Movement</span></label>
+                <input type="number" id="stage" placeholder="1-15" oninput="v(this,15)">
+            </div>
+            <!-- UI label: Delivery | payload key: communication -->
+            <div class="box">
+                <label>Delivery (10)<span>Expression &amp; Flow</span></label>
+                <input type="number" id="delivery" placeholder="1-10" oninput="v(this,10)">
+            </div>
+            <div class="box">
+                <label>Creative (10)<span>Style &amp; Uniqueness</span></label>
+                <input type="number" id="creativity" placeholder="1-10" oninput="v(this,10)">
+            </div>
+            <div class="box">
+                <label>Impact (5)<span>Overall Impression</span></label>
+                <input type="number" id="impact" placeholder="1-5" oninput="v(this,5)">
+            </div>
         </div>
+
         <button class="submit" id="submitBtn">Confirm Score</button>
-        <div id="status" style="text-align: center; color: var(--neon-cyan); margin-top: 15px; font-weight: 800;"></div>
+        <div id="status" style="text-align:center; color:var(--neon-cyan); margin-top:15px; font-weight:800;"></div>
     </div>
 
+    <!-- Leaderboard -->
     <div class="container">
-        <h3 style="color: var(--neon-cyan);">🏆 LIVE STANDINGS</h3>
-        <div style="font-size: 0.6rem; color: white; text-align: center; margin-bottom: 10px; opacity: 0.6;">TAP NAME FOR PERFORMANCE REPORT</div>
+        <h3 style="color:var(--neon-cyan);">🏆 LIVE STANDINGS</h3>
+        <div style="font-size:0.6rem; color:white; text-align:center; margin-bottom:10px; opacity:0.6;">
+            TAP NAME FOR PERFORMANCE REPORT
+        </div>
         <table>
             <thead>
-                <tr style="color: var(--sky-blue); font-size: 0.7rem; letter-spacing: 2px;">
+                <tr style="color:var(--sky-blue); font-size:0.7rem; letter-spacing:2px;">
                     <th>POS</th><th>CONTESTANT</th><th>SCORE</th>
                 </tr>
             </thead>
@@ -347,99 +397,103 @@
 </footer>
 
 <script>
-const APP_URL = "https://script.google.com/macros/s/AKfycbyRFhx8HfUbmt5xHU5lODKDhSRn_9B883rHYTUSSjTcVMSsmXgxfA4V38StyovEeQnD/exec";
+// ══════════════════════════════════════════════════════════════
+// CONFIGURATION — paste your deployed Apps Script URL here
+// ══════════════════════════════════════════════════════════════
+const APP_URL = "https://script.google.com/macros/s/AKfycbz5F_yp-aGpVwupXMkffPKwvO9zSsQjhXXuKsWnM82ps4XBEu0F_s0gwFaCUs9tjfaZ/exec";
+
 let chartInstance = null;
 
-// NEW: VISITOR TRACKING LOGIC
+// ── Visitor tracking ────────────────────────────────────────────
 window.onload = () => {
     const deviceType = navigator.userAgent.includes("Mobi") ? "Mobile" : "Desktop";
-    const screenRes = window.screen.width + "x" + window.screen.height;
+    const screenRes  = window.screen.width + "x" + window.screen.height;
     const deviceInfo = `Visitor on ${deviceType} (${screenRes})`;
     fetch(APP_URL + "?action=log&visitor=" + encodeURIComponent(deviceInfo));
     loadBoard();
 };
 
+// ── Modal helper ────────────────────────────────────────────────
 function showModal(msg, isConfirm = false, customHtml = "", chartData = null) {
     return new Promise((resolve) => {
-        if(customHtml) {
+        if (customHtml) {
             modalContent.innerHTML = customHtml;
         } else {
             modalContent.innerHTML = `<p id="modalMsg">${msg}</p>`;
         }
-        
+
         modalOverlay.style.display = "flex";
-        modalCancel.style.display = isConfirm ? "inline-block" : "none";
-        
-        if(chartData) {
-            const ctx = document.getElementById('reportChart').getContext('2d');
-            if(chartInstance) chartInstance.destroy();
-            
+        modalCancel.style.display  = isConfirm ? "inline-block" : "none";
+
+        if (chartData) {
+            const ctx  = document.getElementById("reportChart").getContext("2d");
+            if (chartInstance) chartInstance.destroy();
+
             const grad = ctx.createLinearGradient(0, 0, 400, 0);
-            grad.addColorStop(0, 'rgba(0, 210, 255, 0.8)');
-            grad.addColorStop(0.5, 'rgba(0, 255, 255, 0.4)');
-            grad.addColorStop(1, 'rgba(58, 123, 213, 0.9)');
-            
+            grad.addColorStop(0,   "rgba(0, 210, 255, 0.8)");
+            grad.addColorStop(0.5, "rgba(0, 255, 255, 0.4)");
+            grad.addColorStop(1,   "rgba(58, 123, 213, 0.9)");
+
             chartInstance = new Chart(ctx, {
-                type: 'bar',
+                type: "bar",
                 data: {
                     labels: Object.keys(chartData),
                     datasets: [{
                         data: Object.values(chartData),
                         backgroundColor: grad,
-                        borderColor: '#ffffff',
+                        borderColor: "#ffffff",
                         borderWidth: 2,
                         borderRadius: 10,
                         borderSkipped: false,
-                        hoverBackgroundColor: '#00ffff',
+                        hoverBackgroundColor: "#00ffff",
                         barPercentage: 0.7
                     }]
                 },
                 options: {
-                    indexAxis: 'y',
+                    indexAxis: "y",
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { 
+                        x: {
                             beginAtZero: true,
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { color: '#ffffff', font: { size: 10, weight: 'bold' } }
+                            grid:  { color: "rgba(255,255,255,0.05)" },
+                            ticks: { color: "#ffffff", font: { size: 10, weight: "bold" } }
                         },
-                        y: { 
-                            grid: { display: false },
-                            ticks: { color: '#00ffff', font: { weight: '900', size: 11 } }
+                        y: {
+                            grid:  { display: false },
+                            ticks: { color: "#00ffff", font: { weight: "900", size: 11 } }
                         }
                     },
-                    plugins: { 
+                    plugins: {
                         legend: { display: false },
                         tooltip: {
-                            backgroundColor: 'rgba(0, 31, 63, 0.9)',
-                            titleFont: { size: 14, weight: 'bold' },
-                            bodyFont: { size: 13 },
-                            borderColor: '#00ffff',
+                            backgroundColor: "rgba(0, 31, 63, 0.9)",
+                            titleFont: { size: 14, weight: "bold" },
+                            bodyFont:  { size: 13 },
+                            borderColor: "#00ffff",
                             borderWidth: 1
                         }
                     },
-                    animation: {
-                        duration: 1500,
-                        easing: 'easeOutElastic'
-                    }
+                    animation: { duration: 1500, easing: "easeOutElastic" }
                 }
             });
         }
 
-        modalOk.onclick = () => { modalOverlay.style.display = "none"; resolve(true); };
+        modalOk.onclick     = () => { modalOverlay.style.display = "none"; resolve(true); };
         modalCancel.onclick = () => { modalOverlay.style.display = "none"; resolve(false); };
     });
 }
 
+// ── Block invalid number-input keys ─────────────────────────────
 document.querySelectorAll('input[type="number"]').forEach(input => {
-    input.addEventListener('keydown', (e) => {
-        if (['e', 'E', '+', '-'].includes(e.key)) e.preventDefault();
+    input.addEventListener("keydown", (e) => {
+        if (["e", "E", "+", "-"].includes(e.key)) e.preventDefault();
     });
 });
 
+// ── Live validation for score fields ────────────────────────────
 async function v(input, max) {
-    let val = input.value;
+    const val = input.value;
     if (val === "0") {
         await showModal("Score cannot be zero!");
         input.value = "";
@@ -448,43 +502,60 @@ async function v(input, max) {
     if (parseFloat(val) > max) input.value = max;
 }
 
-function showPanel(user){
+// ── Restore session on page load ─────────────────────────────────
+function showPanel(user) {
     document.getElementById("judge").value = user.name.toUpperCase();
-    document.getElementById("scoreForm").style.display="block";
-    document.getElementById("loginSection").style.display="none";
+    document.getElementById("scoreForm").style.display   = "block";
+    document.getElementById("loginSection").style.display = "none";
 }
 
-(function(){
-    const user = sessionStorage.getItem("user");
-    if(user) showPanel(JSON.parse(user));
+(function () {
+    const saved = sessionStorage.getItem("user");
+    if (saved) showPanel(JSON.parse(saved));
 })();
 
+// ── Login ────────────────────────────────────────────────────────
 loginBtn.onclick = async () => {
-    const name = loginName.value.trim().toUpperCase();
+    const name     = loginName.value.trim().toUpperCase();
     const password = loginPass.value.trim();
-    if(!name || !password) return;
+    if (!name || !password) return;
+
     loginMsg.innerText = "AUTHENTICATING...";
-    const res = await fetch(APP_URL, { method:"POST", body: new URLSearchParams({action:"login", name, password}) });
+    const res  = await fetch(APP_URL, {
+        method: "POST",
+        body: new URLSearchParams({ action: "login", name, password })
+    });
     const user = await res.json();
-    if(user.success) { sessionStorage.setItem("user", JSON.stringify(user)); showPanel(user); }
-    else loginMsg.innerText = user.message;
+
+    if (user.success) {
+        sessionStorage.setItem("user", JSON.stringify(user));
+        showPanel(user);
+    } else {
+        loginMsg.innerText = user.message;
+    }
 };
 
+// ── Score submission ─────────────────────────────────────────────
 submitBtn.onclick = async () => {
     const user = JSON.parse(sessionStorage.getItem("user"));
-    let rawName = nameInput.value.trim().toUpperCase();
-    const contestant = rawName.split(" ")[0]; 
-    
-    if(!contestant) return showModal("Please enter the Contestant Name!");
 
+    // FIX: use FULL trimmed + uppercased name — NO split() truncation
+    const contestant = nameInput.value.trim().toUpperCase();
+    if (!contestant) return showModal("Please enter the Contestant's full name!");
+
+    // Validate all score fields are filled
     const scoreFields = [
-        { id: "pitch", name: "Pitch" }, { id: "diction", name: "Diction" },
-        { id: "rhythm", name: "Rhythm" }, { id: "mic", name: "Mic" },
-        { id: "stage", name: "Stage" }, { id: "delivery", name: "Delivery" },
-        { id: "creativity", name: "Creative" }, { id: "impact", name: "Impact" }
+        { id: "pitch",     name: "Pitch" },
+        { id: "diction",   name: "Diction" },
+        { id: "rhythm",    name: "Rhythm" },
+        { id: "mic",       name: "Mic" },
+        { id: "stage",     name: "Stage" },
+        { id: "delivery",  name: "Delivery" },
+        { id: "creativity",name: "Creative" },
+        { id: "impact",    name: "Impact" }
     ];
 
-    for (let field of scoreFields) {
+    for (const field of scoreFields) {
         const val = document.getElementById(field.id).value;
         if (val === "" || parseFloat(val) <= 0) {
             await showModal(`Form Incomplete: "${field.name}" is missing!`);
@@ -494,47 +565,58 @@ submitBtn.onclick = async () => {
     }
 
     const go = await showModal(`Confirm submission for ${contestant}?`, true);
-    if(!go) return;
+    if (!go) return;
 
     status.innerText = "TRANSMITTING...";
-    const data = {
-        contestant, 
-        judge: user.name, 
-        role: user.role,
-        pitch: +pitch.value, 
-        tone: +diction.value, 
-        rhythm: +rhythm.value, 
-        mic: +mic.value,
-        stage: +stage.value, 
-        communication: +delivery.value, 
-        creativity: +creativity.value, 
-        impact: +impact.value
+
+    // FIX: payload keys match backend exactly
+    //   diction  → tone
+    //   delivery → communication
+    const payload = {
+        contestant,
+        judge:         user.name,
+        role:          user.role,
+        pitch:         +document.getElementById("pitch").value,
+        tone:          +document.getElementById("diction").value,    // diction → tone
+        rhythm:        +document.getElementById("rhythm").value,
+        mic:           +document.getElementById("mic").value,
+        stage:         +document.getElementById("stage").value,
+        communication: +document.getElementById("delivery").value,   // delivery → communication
+        creativity:    +document.getElementById("creativity").value,
+        impact:        +document.getElementById("impact").value
     };
 
-    const res = await fetch(APP_URL, { method:"POST", body: new URLSearchParams(data) });
+    const res    = await fetch(APP_URL, { method: "POST", body: new URLSearchParams(payload) });
     const result = await res.json();
-    if(result.success) { 
-        await showModal("SUCCESS ✔ DATA SAVED"); 
-        location.reload(); 
+
+    if (result.success) {
+        await showModal("SUCCESS ✔ DATA SAVED");
+        location.reload();
     } else {
-        await showModal(result.error);
+        await showModal(result.error || "Submission failed. Please try again.");
     }
 };
 
+// ── Performance report ───────────────────────────────────────────
 async function fetchReport(name) {
-    status.innerText = `GENERATING REPORT...`;
+    status.innerText = "GENERATING REPORT...";
     try {
-        const res = await fetch(APP_URL, { 
-            method: "POST", 
-            body: new URLSearchParams({ action: "report", contestant: name }) 
+        const res  = await fetch(APP_URL, {
+            method: "POST",
+            body: new URLSearchParams({ action: "report", contestant: name })
         });
         const data = await res.json();
-        if(data.success) {
+
+        if (data.success) {
             const html = `
                 <h3 style="color:var(--neon-cyan); margin-top:0;">PERFORMANCE CARD</h3>
                 <p style="font-size:1.5rem; margin-bottom:5px;">${data.name}</p>
-                <div style="font-size:0.7rem; color:var(--sky-blue); margin-bottom:20px; font-weight:800;">AVERAGES FROM ${data.judgeCount} JUDGES</div>
-                
+                <div style="font-size:0.7rem; color:var(--sky-blue); margin-bottom:5px; font-weight:800;">
+                    AVERAGES FROM ${data.judgeCount} JUDGE(S)
+                </div>
+                <div style="font-size:1rem; color:#FFD700; font-weight:900; margin-bottom:20px;">
+                    TOTAL WEIGHTED SCORE: ${data.totalScore}
+                </div>
                 <div class="report-flex-container">
                     <div class="report-stats">
                         <div class="report-grid">
@@ -543,39 +625,52 @@ async function fetchReport(name) {
                                     <span class="report-label">${label}</span>
                                     <span class="report-val">${val}</span>
                                 </div>
-                            `).join('')}
+                            `).join("")}
                         </div>
                     </div>
-                    <div class="report-chart" style="height: 300px;">
+                    <div class="report-chart" style="height:300px;">
                         <canvas id="reportChart"></canvas>
                     </div>
                 </div>
             `;
             await showModal("", false, html, data.averages);
         } else {
-            await showModal(data.message);
+            await showModal(data.message || "No data found.");
         }
-    } catch(e) { await showModal("Network Error."); }
+    } catch (e) {
+        await showModal("Network Error. Please check your connection.");
+    }
     status.innerText = "";
 }
 
-async function loadBoard(){
+// ── Leaderboard loader ───────────────────────────────────────────
+async function loadBoard() {
     try {
-        const res = await fetch(APP_URL+"?p=board");
+        const res  = await fetch(APP_URL + "?p=board");
         const data = await res.json();
-        boardBody.innerHTML = data.map((d,i)=> `
-            <tr class="${i==0?'first':''} clickable-row" onclick="fetchReport('${d.name}')">
-                <td>#${i+1}</td>
-                <td style="text-align: left;">
+
+        boardBody.innerHTML = data.map((d, i) => `
+            <tr class="${i === 0 ? "first" : ""} clickable-row"
+                onclick="fetchReport('${d.name.replace(/'/g, "\\'")}')">
+                <td>#${i + 1}</td>
+                <td style="text-align:left;">
                     <div style="font-weight:900; font-size:1.1rem; color:white;">${d.name}</div>
-                    <div style="font-size:0.6rem; color:var(--neon-cyan); opacity:0.8; font-weight:bold;">VOTED BY: ${d.judges.join(" | ")}</div>
+                    <div style="font-size:0.6rem; color:var(--neon-cyan); opacity:0.8; font-weight:bold;">
+                        VOTED BY: ${d.judges.join(" | ")}
+                    </div>
                 </td>
                 <td>${d.avg.toFixed(2)}</td>
-            </tr>`).join('');
-    } catch(e) { console.log("Updating..."); }
+            </tr>
+        `).join("");
+    } catch (e) {
+        console.log("Leaderboard updating...");
+    }
 }
 
+// ── Logout ───────────────────────────────────────────────────────
 logoutBtn.onclick = () => { sessionStorage.clear(); location.reload(); };
+
+// ── Auto-refresh leaderboard every 15 s ─────────────────────────
 setInterval(loadBoard, 15000);
 </script>
 </body>
